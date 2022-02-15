@@ -6,43 +6,6 @@
 by [Daniel Cárdenas [6102358]](https://danielcs88.github.io/)
 """
 
-# %% [markdown]
-# - [Term Project: Fin6525](#Term-Project:-Fin6525)
-#   * [Part One: Data](#Part-One:-Data)
-#     + [A. Table 1](#A.-Table-1)
-#       - [Table 1: Monthly Returns](#Table-1:-Monthly-Returns)
-#       - [Table 1: Summary Statistics](#Table-1:-Summary-Statistics)
-#       - [Annualized Returns](#Annualized-Returns)
-#     + [B. Table 2: Covariance Matrix](#B.-Table-2:-Covariance-Matrix)
-#     + [C. Table 3: Correlation Matrix](#C.-Table-3:-Correlation-Matrix)
-#     + [D. Prospectus Strategy](#D.-Prospectus-Strategy)
-#   * [Part Two](#Part-Two)
-#     + [A. CAPM](#A.-CAPM)
-#     + [B. β](#B.-β)
-#     + [C. Table 4](#C.-Table-4)
-#     + [D. Essay: Differences Between Dow Jones And S&P 500](#D.-Essay:-Differences-between-Dow-Jones-and-S&P-500)
-#     + [E. Runs Test: S&P 500](#E.-Runs-Test:-S&P-500)
-#       - [Runs Test Interpretation](#Runs-Test-Interpretation)
-#   * [Part Three](#Part-Three)
-#       - [A. Table 5](#A.-Table-5)
-#     + [B. Graph 1](#B.-Graph-1)
-#       - [Static Graph](#Static-Graph)
-#       - [Dynamic Graph](#Dynamic-Graph)
-#   * [Part Four](#Part-Four)
-#     + [A. Graph 2: Mean Variance Plot](#A.-Graph-2:-Mean-Variance-Plot)
-#       - [Globally Minimum Variance Portfolio](#Globally-Minimum-Variance-Portfolio)
-#     + [B. Graph 3: Mean-Variance Frontier](#B.-Graph-3:-Mean-Variance-Frontier)
-#       - [Random Portfolios](#Random-Portfolios)
-#         * [Minimum Volatility](#Minimum-Volatility)
-#         * [Maximum Sharpe Ratio](#Maximum-Sharpe-Ratio)
-#   * [Part Five: Performance](#Part-Five:-Performance)
-#     + [Sharpe Measure](#Sharpe-Measure)
-#     + [Treynor Measure](#Treynor-Measure)
-#     + [Rankings](#Rankings)
-#       - [Sharpe Measure](#Sharpe-Measure:-Rankings)
-#       - [Treynor Measure](#Treynor-Measure:-Rankings)
-#       - [Geometric Mean](#Geometric-Mean:-Rankings)
-
 # %%
 from IPython import get_ipython
 
@@ -87,6 +50,49 @@ from scipy.stats import gmean
 # Plotting parameters to make plots bigger
 plt.rcParams["figure.dpi"] = 125
 get_ipython().run_line_magic("config", "InlineBackend.figure_format = 'retina'")
+
+# %%
+display(
+    Markdown(
+        """
+   # - [Term Project: Fin6525](#Term-Project:-Fin6525)
+   * [Part One: Data](#Part-One:-Data)
+     + [A. Table 1](#A.-Table-1)
+       - [Table 1: Monthly Returns](#Table-1:-Monthly-Returns)
+       - [Table 1: Summary Statistics](#Table-1:-Summary-Statistics)
+       - [Annualized Returns](#Annualized-Returns)
+     + [B. Table 2: Covariance Matrix](#B.-Table-2:-Covariance-Matrix)
+     + [C. Table 3: Correlation Matrix](#C.-Table-3:-Correlation-Matrix)
+     + [D. Prospectus Strategy](#D.-Prospectus-Strategy)
+   * [Part Two](#Part-Two)
+     + [A. CAPM](#A.-CAPM)
+     + [B. β](#B.-β)
+     + [C. Table 4](#C.-Table-4)
+     + [D. Essay: Differences Between Dow Jones And S&P 500](#D.-Essay:-Differences-between-Dow-Jones-and-S&P-500)
+     + [E. Runs Test: S&P 500](#E.-Runs-Test:-S&P-500)
+       - [Runs Test Interpretation](#Runs-Test-Interpretation)
+   * [Part Three](#Part-Three)
+       - [A. Table 5](#A.-Table-5)
+     + [B. Graph 1](#B.-Graph-1)
+       - [Static Graph](#Static-Graph)
+       - [Dynamic Graph](#Dynamic-Graph)
+   * [Part Four](#Part-Four)
+     + [A. Graph 2: Mean Variance Plot](#A.-Graph-2:-Mean-Variance-Plot)
+       - [Globally Minimum Variance Portfolio](#Globally-Minimum-Variance-Portfolio)
+     + [B. Graph 3: Mean-Variance Frontier](#B.-Graph-3:-Mean-Variance-Frontier)
+       - [Random Portfolios](#Random-Portfolios)
+         * [Minimum Volatility](#Minimum-Volatility)
+         * [Maximum Sharpe Ratio](#Maximum-Sharpe-Ratio)
+   * [Part Five: Performance](#Part-Five:-Performance)
+     + [Sharpe Measure](#Sharpe-Measure)
+     + [Treynor Measure](#Treynor-Measure)
+     + [Rankings](#Rankings)
+       - [Sharpe Measure](#Sharpe-Measure:-Rankings)
+       - [Treynor Measure](#Treynor-Measure:-Rankings)
+       - [Geometric Mean](#Geometric-Mean:-Rankings)
+"""
+    )
+)
 
 # %%
 # Formatting to display numbers
