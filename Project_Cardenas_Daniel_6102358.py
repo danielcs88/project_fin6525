@@ -7,43 +7,41 @@ by [Daniel Cárdenas [6102358]](https://danielcs88.github.io/)
 """
 
 # %% [markdown]
-# - [Term Project: FIN6525](#term-project--fin6525)
-#   * [Part One: Data](#part-one--data)
-#     + [A. Table 1](#a-table-1)
-#       - [Table 1: Monthly Returns](#table-1--monthly-returns)
-#       - [Table 1: Summary Statistics](#table-1--summary-statistics)
-#       - [Annualized Returns](#annualized-returns)
-#     + [B. Table 2: Covariance Matrix](#b-table-2--covariance-matrix)
-#     + [C. Table 3: Correlation Matrix](#c-table-3--correlation-matrix)
-#     + [D. Prospectus Strategy](#d-prospectus-strategy)
-#   * [Part Two](#part-two)
-#     + [A. CAPM](#a-capm)
-#     + [B. β](#b--)
-#     + [C. Table 4](#c-table-4)
-#     + [D. Essay: Differences between Dow Jones and S&P 500](#d-essay--differences-between-dow-jones-and-s-p-500)
-#     + [E. Runs Test: S&P 500](#e-runs-test--s-p-500)
-#       - [Runs Test Interpretation](#runs-test-interpretation)
-#   * [Part Three](#part-three)
-#       - [A. Table 5](#a-table-5)
-#     + [B. Graph 1](#b-graph-1)
-#       - [Static Graph](#static-graph)
-#       - [Dynamic Graph](#dynamic-graph)
-#   * [Part 4](#part-4)
-#     + [A. Graph 2: Mean Variance Plot](#a-graph-2--mean-variance-plot)
-#       - [Globally Minimum Variance Portfolio](#globally-minimum-variance-portfolio)
-#     + [B. Graph 3: Mean-Variance Frontier](#b-graph-3--mean-variance-frontier)
-#       - [Random Portfolios](#random-portfolios)
-#         * [Minimum Volatility](#minimum-volatility)
-#         * [Minimum Volatility](#minimum-volatility-1)
-#   * [Part 5: Performance](#part-5--performance)
-#     + [Sharpe Measure](#sharpe-measure)
-#     + [Treynor Measure](#treynor-measure)
-#     + [Rankings](#rankings)
-#       - [Sharpe Measure](#sharpe-measure-1)
-#       - [Treynor Measure](#treynor-measure-1)
-#       - [Geometric Mean](#geometric-mean)
-
-
+# - [Term Project: Fin6525](#Term-Project:-Fin6525)
+#   * [Part One: Data](#Part-One:-Data)
+#     + [A. Table 1](#A.-Table-1)
+#       - [Table 1: Monthly Returns](#Table-1:-Monthly-Returns)
+#       - [Table 1: Summary Statistics](#Table-1:-Summary-Statistics)
+#       - [Annualized Returns](#Annualized-Returns)
+#     + [B. Table 2: Covariance Matrix](#B.-Table-2:-Covariance-Matrix)
+#     + [C. Table 3: Correlation Matrix](#C.-Table-3:-Correlation-Matrix)
+#     + [D. Prospectus Strategy](#D.-Prospectus-Strategy)
+#   * [Part Two](#Part-Two)
+#     + [A. CAPM](#A.-CAPM)
+#     + [B. β](#B.-β)
+#     + [C. Table 4](#C.-Table-4)
+#     + [D. Essay: Differences Between Dow Jones And S&P 500](#D.-Essay:-Differences-between-Dow-Jones-and-S&P-500)
+#     + [E. Runs Test: S&P 500](#E.-Runs-Test:-S&P-500)
+#       - [Runs Test Interpretation](#Runs-Test-Interpretation)
+#   * [Part Three](#Part-Three)
+#       - [A. Table 5](#A.-Table-5)
+#     + [B. Graph 1](#B.-Graph-1)
+#       - [Static Graph](#Static-Graph)
+#       - [Dynamic Graph](#Dynamic-Graph)
+#   * [Part Four](#Part-Four)
+#     + [A. Graph 2: Mean Variance Plot](#A.-Graph-2:-Mean-Variance-Plot)
+#       - [Globally Minimum Variance Portfolio](#Globally-Minimum-Variance-Portfolio)
+#     + [B. Graph 3: Mean-Variance Frontier](#B.-Graph-3:-Mean-Variance-Frontier)
+#       - [Random Portfolios](#Random-Portfolios)
+#         * [Minimum Volatility](#Minimum-Volatility)
+#         * [Maximum Sharpe Ratio](#Maximum-Sharpe-Ratio)
+#   * [Part Five: Performance](#Part-Five:-Performance)
+#     + [Sharpe Measure](#Sharpe-Measure)
+#     + [Treynor Measure](#Treynor-Measure)
+#     + [Rankings](#Rankings)
+#       - [Sharpe Measure](#Sharpe-Measure:-Rankings)
+#       - [Treynor Measure](#Treynor-Measure:-Rankings)
+#       - [Geometric Mean](#Geometric-Mean:-Rankings)
 
 # %%
 from IPython import get_ipython
@@ -740,7 +738,7 @@ investments.plot_bokeh.line(
 )
 
 # %% [markdown] tags=[]
-# ## Part 4
+# ## Part Four
 
 # %% [markdown]
 # Using the five-year performance statistics of your five funds and the
@@ -1073,7 +1071,7 @@ min_vol_port
 display(annual_mean_var, w_star)
 
 # %% [markdown] tags=[]
-# ##### Minimum Volatility
+#  ##### Maximum Sharpe Ratio
 
 # %%
 annual_RiskFree = riskFree * 12
@@ -1133,7 +1131,7 @@ plt.gca().xaxis.set_major_formatter(mtick.PercentFormatter(1))
 # in the mean variance frontier matrix formulation
 
 # %% [markdown] tags=[]
-# ## Part 5: Performance
+# ## Part Five: Performance
 #
 # Rank the performance of the five funds and the five-fund portfolio according
 # to the following criteria:
@@ -1258,7 +1256,7 @@ annual_mean_var["Geometric Mean"] = all_geo
 # ### Rankings
 
 # %% [markdown]
-# #### Sharpe Measure
+# #### Sharpe Measure: Rankings
 
 # %%
 annual_mean_var.set_index("Index").sort_values(
@@ -1278,7 +1276,7 @@ annual_mean_var.set_index("Index")["Sharpe Ratio"].plot(
 # plt.gca().yaxis.set_major_formatter(mtick.PercentFormatter(1))
 
 # %% [markdown]
-# #### Treynor Measure
+# #### Treynor Measure: Rankings
 
 # %%
 annual_mean_var.set_index("Index").sort_values(
@@ -1298,7 +1296,7 @@ annual_mean_var.set_index("Index")["Treynor Ratio"].plot(
 # plt.gca().yaxis.set_major_formatter(mtick.PercentFormatter(1))
 
 # %% [markdown]
-# #### Geometric Mean
+# #### Geometric Mean: Rankings
 
 # %%
 annual_mean_var.set_index("Index").sort_values(

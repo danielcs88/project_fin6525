@@ -2,18 +2,58 @@
 
 by [Daniel Cárdenas [6102358]](https://danielcs88.github.io/)
 
+ - [Term Project: Fin6525](#Term-Project:-Fin6525)
+   * [Part One: Data](#Part-One:-Data)
+     + [A. Table 1](#A.-Table-1)
+       - [Table 1: Monthly Returns](#Table-1:-Monthly-Returns)
+       - [Table 1: Summary Statistics](#Table-1:-Summary-Statistics)
+       - [Annualized Returns](#Annualized-Returns)
+     + [B. Table 2: Covariance Matrix](#B.-Table-2:-Covariance-Matrix)
+     + [C. Table 3: Correlation Matrix](#C.-Table-3:-Correlation-Matrix)
+     + [D. Prospectus Strategy](#D.-Prospectus-Strategy)
+   * [Part Two](#Part-Two)
+     + [A. CAPM](#A.-CAPM)
+     + [B. β](#B.-β)
+     + [C. Table 4](#C.-Table-4)
+     + [D. Essay: Differences Between Dow Jones And S&P 500](#D.-Essay:-Differences-between-Dow-Jones-and-S&P-500)
+     + [E. Runs Test: S&P 500](#E.-Runs-Test:-S&P-500)
+       - [Runs Test Interpretation](#Runs-Test-Interpretation)
+   * [Part Three](#Part-Three)
+       - [A. Table 5](#A.-Table-5)
+     + [B. Graph 1](#B.-Graph-1)
+       - [Static Graph](#Static-Graph)
+       - [Dynamic Graph](#Dynamic-Graph)
+   * [Part Four](#Part-Four)
+     + [A. Graph 2: Mean Variance Plot](#A.-Graph-2:-Mean-Variance-Plot)
+       - [Globally Minimum Variance Portfolio](#Globally-Minimum-Variance-Portfolio)
+     + [B. Graph 3: Mean-Variance Frontier](#B.-Graph-3:-Mean-Variance-Frontier)
+       - [Random Portfolios](#Random-Portfolios)
+         * [Minimum Volatility](#Minimum-Volatility)
+         * [Maximum Sharpe Ratio](#Maximum-Sharpe-Ratio)
+   * [Part Five: Performance](#Part-Five:-Performance)
+     + [Sharpe Measure](#Sharpe-Measure)
+     + [Treynor Measure](#Treynor-Measure)
+     + [Rankings](#Rankings)
+       - [Sharpe Measure](#Sharpe-Measure:-Rankings)
+       - [Treynor Measure](#Treynor-Measure:-Rankings)
+       - [Geometric Mean](#Geometric-Mean:-Rankings)
+
 
 ```python
 from IPython import get_ipython
+
+# This whole line is just to make running the code possible using Google Colab
+# and installs depdenencies
 
 if "google.colab" in str(get_ipython()):
     print("Running on Colab")
     get_ipython().run_cell_magic(
         "capture",
         "",
-        "! pip install yfinance\n! pip install blackcellmagic\n! pip install numpy-financial\n! pip install pandas-bokeh\n! pip3 install pickle 5",
+        "! pip install yfinance\n! pip install numpy-financial\n! pip install pandas-bokeh\n! pip3 install pickle5",
     )
     import pickle5 as pickle
+
 
 else:
     print("Not running on Colab")
@@ -24,18 +64,10 @@ else:
 
 
 ```python
-get_ipython().run_line_magic("load_ext", "blackcellmagic")
-```
-
-    The blackcellmagic extension is already loaded. To reload it, use:
-      %reload_ext blackcellmagic
-
-
-
-```python
 import functools
 import operator
 from datetime import datetime
+from typing import List
 
 import matplotlib.pyplot as plt
 import matplotlib.ticker as mtick
@@ -52,8 +84,8 @@ from matplotlib.dates import date2num
 from pandas_datareader import data as pdr
 from scipy.stats import gmean
 
-plt.rcParams["figure.dpi"] = 140
-# yf.pdr_override()
+# Plotting parameters to make plots bigger
+plt.rcParams["figure.dpi"] = 125
 get_ipython().run_line_magic("config", "InlineBackend.figure_format = 'retina'")
 ```
 
@@ -152,14 +184,14 @@ data.head()
     <tr>
       <th>2017-01-01</th>
       <td>22.686363</td>
-      <td>28.715216</td>
-      <td>16.800989</td>
+      <td>28.715219</td>
+      <td>16.800987</td>
       <td>5.435126</td>
       <td>10.80</td>
     </tr>
     <tr>
       <th>2017-02-01</th>
-      <td>21.537804</td>
+      <td>21.537806</td>
       <td>34.466110</td>
       <td>18.229412</td>
       <td>6.194886</td>
@@ -167,26 +199,26 @@ data.head()
     </tr>
     <tr>
       <th>2017-03-01</th>
-      <td>20.609766</td>
-      <td>33.828217</td>
+      <td>20.609764</td>
+      <td>33.828220</td>
       <td>16.791271</td>
       <td>6.571821</td>
       <td>10.61</td>
     </tr>
     <tr>
       <th>2017-04-01</th>
-      <td>19.654161</td>
-      <td>35.261036</td>
+      <td>19.654165</td>
+      <td>35.261028</td>
       <td>17.005049</td>
       <td>6.945811</td>
       <td>10.84</td>
     </tr>
     <tr>
       <th>2017-05-01</th>
-      <td>18.569921</td>
+      <td>18.569923</td>
       <td>35.938179</td>
-      <td>17.986483</td>
-      <td>7.749742</td>
+      <td>17.986481</td>
+      <td>7.749743</td>
       <td>10.24</td>
     </tr>
   </tbody>
@@ -520,7 +552,7 @@ with pd.option_context("display.float_format", PERCENT.format):
       <td>-7.244%</td>
       <td>-25.536%</td>
       <td>-11.876%</td>
-      <td>-26.036%</td>
+      <td>-26.035%</td>
       <td>-9.860%</td>
     </tr>
     <tr>
@@ -879,7 +911,7 @@ table_1.style.format(proper_format)
 
 <style type="text/css">
 </style>
-<table id="T_fed92_">
+<table id="T_04b1c_">
   <thead>
     <tr>
       <th class="blank level0" >&nbsp;</th>
@@ -891,39 +923,39 @@ table_1.style.format(proper_format)
   </thead>
   <tbody>
     <tr>
-      <th id="T_fed92_level0_row0" class="row_heading level0 row0" >COPX</th>
-      <td id="T_fed92_row0_col0" class="data row0 col0" >1.326%</td>
-      <td id="T_fed92_row0_col1" class="data row0 col1" >0.837%</td>
-      <td id="T_fed92_row0_col2" class="data row0 col2" >9.975%</td>
-      <td id="T_fed92_row0_col3" class="data row0 col3" >$16,490.08</td>
+      <th id="T_04b1c_level0_row0" class="row_heading level0 row0" >COPX</th>
+      <td id="T_04b1c_row0_col0" class="data row0 col0" >1.326%</td>
+      <td id="T_04b1c_row0_col1" class="data row0 col1" >0.837%</td>
+      <td id="T_04b1c_row0_col2" class="data row0 col2" >9.975%</td>
+      <td id="T_04b1c_row0_col3" class="data row0 col3" >$16,490.08</td>
     </tr>
     <tr>
-      <th id="T_fed92_level0_row1" class="row_heading level0 row1" >CURE</th>
-      <td id="T_fed92_row1_col0" class="data row1 col0" >3.256%</td>
-      <td id="T_fed92_row1_col1" class="data row1 col1" >2.362%</td>
-      <td id="T_fed92_row1_col2" class="data row1 col2" >13.413%</td>
-      <td id="T_fed92_row1_col3" class="data row1 col3" >$40,584.76</td>
+      <th id="T_04b1c_level0_row1" class="row_heading level0 row1" >CURE</th>
+      <td id="T_04b1c_row1_col0" class="data row1 col0" >3.256%</td>
+      <td id="T_04b1c_row1_col1" class="data row1 col1" >2.362%</td>
+      <td id="T_04b1c_row1_col2" class="data row1 col2" >13.413%</td>
+      <td id="T_04b1c_row1_col3" class="data row1 col3" >$40,584.75</td>
     </tr>
     <tr>
-      <th id="T_fed92_level0_row2" class="row_heading level0 row2" >TAN</th>
-      <td id="T_fed92_row2_col0" class="data row2 col0" >2.911%</td>
-      <td id="T_fed92_row2_col1" class="data row2 col1" >2.293%</td>
-      <td id="T_fed92_row2_col2" class="data row2 col2" >11.186%</td>
-      <td id="T_fed92_row2_col3" class="data row2 col3" >$38,973.90</td>
+      <th id="T_04b1c_level0_row2" class="row_heading level0 row2" >TAN</th>
+      <td id="T_04b1c_row2_col0" class="data row2 col0" >2.911%</td>
+      <td id="T_04b1c_row2_col1" class="data row2 col1" >2.293%</td>
+      <td id="T_04b1c_row2_col2" class="data row2 col2" >11.186%</td>
+      <td id="T_04b1c_row2_col3" class="data row2 col3" >$38,973.90</td>
     </tr>
     <tr>
-      <th id="T_fed92_level0_row3" class="row_heading level0 row3" >TECL</th>
-      <td id="T_fed92_row3_col0" class="data row3 col0" >5.780%</td>
-      <td id="T_fed92_row3_col1" class="data row3 col1" >4.309%</td>
-      <td id="T_fed92_row3_col2" class="data row3 col2" >16.799%</td>
-      <td id="T_fed92_row3_col3" class="data row3 col3" >$125,719.25</td>
+      <th id="T_04b1c_level0_row3" class="row_heading level0 row3" >TECL</th>
+      <td id="T_04b1c_row3_col0" class="data row3 col0" >5.780%</td>
+      <td id="T_04b1c_row3_col1" class="data row3 col1" >4.309%</td>
+      <td id="T_04b1c_row3_col2" class="data row3 col2" >16.799%</td>
+      <td id="T_04b1c_row3_col3" class="data row3 col3" >$125,719.26</td>
     </tr>
     <tr>
-      <th id="T_fed92_level0_row4" class="row_heading level0 row4" >UNL</th>
-      <td id="T_fed92_row4_col0" class="data row4 col0" >0.864%</td>
-      <td id="T_fed92_row4_col1" class="data row4 col1" >0.556%</td>
-      <td id="T_fed92_row4_col2" class="data row4 col2" >8.101%</td>
-      <td id="T_fed92_row4_col3" class="data row4 col3" >$13,944.44</td>
+      <th id="T_04b1c_level0_row4" class="row_heading level0 row4" >UNL</th>
+      <td id="T_04b1c_row4_col0" class="data row4 col0" >0.864%</td>
+      <td id="T_04b1c_row4_col1" class="data row4 col1" >0.556%</td>
+      <td id="T_04b1c_row4_col2" class="data row4 col2" >8.101%</td>
+      <td id="T_04b1c_row4_col3" class="data row4 col3" >$13,944.44</td>
     </tr>
   </tbody>
 </table>
@@ -959,7 +991,7 @@ annualized.style.format(proper_format)
 
 <style type="text/css">
 </style>
-<table id="T_8ab78_">
+<table id="T_7f86a_">
   <thead>
     <tr>
       <th class="blank level0" >&nbsp;</th>
@@ -971,39 +1003,39 @@ annualized.style.format(proper_format)
   </thead>
   <tbody>
     <tr>
-      <th id="T_8ab78_level0_row0" class="row_heading level0 row0" >COPX</th>
-      <td id="T_8ab78_row0_col0" class="data row0 col0" >17.123%</td>
-      <td id="T_8ab78_row0_col1" class="data row0 col1" >10.521%</td>
-      <td id="T_8ab78_row0_col2" class="data row0 col2" >34.553%</td>
-      <td id="T_8ab78_row0_col3" class="data row0 col3" >$16,490.08</td>
+      <th id="T_7f86a_level0_row0" class="row_heading level0 row0" >COPX</th>
+      <td id="T_7f86a_row0_col0" class="data row0 col0" >17.123%</td>
+      <td id="T_7f86a_row0_col1" class="data row0 col1" >10.521%</td>
+      <td id="T_7f86a_row0_col2" class="data row0 col2" >34.553%</td>
+      <td id="T_7f86a_row0_col3" class="data row0 col3" >$16,490.08</td>
     </tr>
     <tr>
-      <th id="T_8ab78_level0_row1" class="row_heading level0 row1" >CURE</th>
-      <td id="T_8ab78_row1_col0" class="data row1 col0" >46.883%</td>
-      <td id="T_8ab78_row1_col1" class="data row1 col1" >32.334%</td>
-      <td id="T_8ab78_row1_col2" class="data row1 col2" >46.464%</td>
-      <td id="T_8ab78_row1_col3" class="data row1 col3" >$40,584.76</td>
+      <th id="T_7f86a_level0_row1" class="row_heading level0 row1" >CURE</th>
+      <td id="T_7f86a_row1_col0" class="data row1 col0" >46.883%</td>
+      <td id="T_7f86a_row1_col1" class="data row1 col1" >32.334%</td>
+      <td id="T_7f86a_row1_col2" class="data row1 col2" >46.464%</td>
+      <td id="T_7f86a_row1_col3" class="data row1 col3" >$40,584.75</td>
     </tr>
     <tr>
-      <th id="T_8ab78_level0_row2" class="row_heading level0 row2" >TAN</th>
-      <td id="T_8ab78_row2_col0" class="data row2 col0" >41.105%</td>
-      <td id="T_8ab78_row2_col1" class="data row2 col1" >31.267%</td>
-      <td id="T_8ab78_row2_col2" class="data row2 col2" >38.750%</td>
-      <td id="T_8ab78_row2_col3" class="data row2 col3" >$38,973.90</td>
+      <th id="T_7f86a_level0_row2" class="row_heading level0 row2" >TAN</th>
+      <td id="T_7f86a_row2_col0" class="data row2 col0" >41.105%</td>
+      <td id="T_7f86a_row2_col1" class="data row2 col1" >31.267%</td>
+      <td id="T_7f86a_row2_col2" class="data row2 col2" >38.750%</td>
+      <td id="T_7f86a_row2_col3" class="data row2 col3" >$38,973.90</td>
     </tr>
     <tr>
-      <th id="T_8ab78_level0_row3" class="row_heading level0 row3" >TECL</th>
-      <td id="T_8ab78_row3_col0" class="data row3 col0" >96.264%</td>
-      <td id="T_8ab78_row3_col1" class="data row3 col1" >65.913%</td>
-      <td id="T_8ab78_row3_col2" class="data row3 col2" >58.195%</td>
-      <td id="T_8ab78_row3_col3" class="data row3 col3" >$125,719.25</td>
+      <th id="T_7f86a_level0_row3" class="row_heading level0 row3" >TECL</th>
+      <td id="T_7f86a_row3_col0" class="data row3 col0" >96.264%</td>
+      <td id="T_7f86a_row3_col1" class="data row3 col1" >65.913%</td>
+      <td id="T_7f86a_row3_col2" class="data row3 col2" >58.195%</td>
+      <td id="T_7f86a_row3_col3" class="data row3 col3" >$125,719.26</td>
     </tr>
     <tr>
-      <th id="T_8ab78_level0_row4" class="row_heading level0 row4" >UNL</th>
-      <td id="T_8ab78_row4_col0" class="data row4 col0" >10.878%</td>
-      <td id="T_8ab78_row4_col1" class="data row4 col1" >6.876%</td>
-      <td id="T_8ab78_row4_col2" class="data row4 col2" >28.062%</td>
-      <td id="T_8ab78_row4_col3" class="data row4 col3" >$13,944.44</td>
+      <th id="T_7f86a_level0_row4" class="row_heading level0 row4" >UNL</th>
+      <td id="T_7f86a_row4_col0" class="data row4 col0" >10.878%</td>
+      <td id="T_7f86a_row4_col1" class="data row4 col1" >6.876%</td>
+      <td id="T_7f86a_row4_col2" class="data row4 col2" >28.062%</td>
+      <td id="T_7f86a_row4_col3" class="data row4 col3" >$13,944.44</td>
     </tr>
   </tbody>
 </table>
@@ -1015,6 +1047,8 @@ annualized.style.format(proper_format)
 
 
 ```python
+# All formulas related to variances (i.e., standard deviations, covariance)
+# will have `dd=0` for the population standard deviation.
 returns.cov(ddof=0)
 ```
 
@@ -1200,6 +1234,15 @@ plt.show()
  Using each fund’s prospectus or information you find on the web, state in your
  own words the strategy and philosophy of each fund.
 
+ | ETF          | COPX                                                         | CURE                                                         | TAN                                                          | TECL                                                         | UNL                                                          |
+ | ------------ | ------------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ |
+ | **Name**     | Global X Copper Miners ETF                                   | Direxion Daily Healthcare Bull 3X Shares                     | Invesco Solar ETF                                            | Direxion Daily Technology Bull 3x Shares                     | United States 12 Month Natural Gas Fund, LP                  |
+ | **About**    | COPX tracks a market-cap-weighted index of global copper mining companies. | CURE provides 3x levered exposure to a market-cap-weighted sub-index of the S&P 500 that tracks the performance of US-listed health care companies. | TAN tracks an index of global solar energy companies selected based on the revenue generated from solar-related business. | TECL provides 3x leveraged exposure to a market-cap weighted index of US large-cap technology companies. | UNL holds the 12 nearest-month NYMEX natural gas futures contracts in equal weights. |
+ | **Category** | Basic Materials                                              | Trading--Leveraged Equity                                    | Miscellaneous Sector                                         | Trading--Leveraged Equity                                    | Commodities Focused                                          |
+ | **Strategy** | Vanilla                                                      | Vanilla                                                      | Fundamental                                                  | Vanilla                                                      | Laddered                                                     |
+ | **Segment**  | Equity: Global Copper Miners                                 | Leveraged Equity: U.S. Health Care                           | Equity: Global Renewable Energy                              | Leveraged Equity: U.S. Information Technology                | Commodities: Energy Natural Gas                              |
+ | **Niche**    | ETF                                                          | COPXBroad-based                                              | CURERenewable Energy                                         | TANBroad-based                                               | TECLLaddered                                                 |
+
  ## Part Two
 
  ### A. CAPM
@@ -1219,9 +1262,9 @@ plt.show()
 
 ```python
 # Note that Python uses zero-indices
-t13 = pdr.DataReader("GS3M", "fred", "02/2017", end)
-rm = yf.download(["^GSPC", "^DJI"], start=start, end=end, interval="1mo")["Adj Close"]
-rm = rm.pct_change().dropna()
+T13W = pdr.DataReader("GS3M", "fred", "02/2017", end)
+Rm = yf.download(["^GSPC", "^DJI"], start=start, end=end, interval="1mo")["Adj Close"]
+Rm = Rm.pct_change().dropna()
 ```
 
     [*********************100%***********************]  2 of 2 completed
@@ -1237,7 +1280,7 @@ rm = rm.pct_change().dropna()
 
 
 ```python
-t13 = t13.div(100).div(12)
+T13W = T13W.div(100).div(12)
 ```
 
  The traditional equation for the Capital Asset Pricing Model
@@ -1263,21 +1306,301 @@ t13 = t13.div(100).div(12)
 
 
 ```python
-sp500_ols = [sm.OLS(endog=returns[fund], exog=rm["^GSPC"]).fit() for fund in funds]
+# Run the regression for each fund with S^P500 as the benchmark
+sp500_ols = [sm.OLS(endog=returns[fund], exog=Rm["^GSPC"]).fit() for fund in funds]
 ```
 
 
 ```python
-djia_ols = [sm.OLS(endog=returns[fund], exog=rm["^DJI"]).fit() for fund in funds]
+# Run the regression for each fund with the DJIA as the benchmark
+djia_ols = [sm.OLS(endog=returns[fund], exog=Rm["^DJI"]).fit() for fund in funds]
 ```
 
 
 ```python
+for result in sp500_ols:
+    display(result.summary())
+```
+
+
+<table class="simpletable">
+<caption>OLS Regression Results</caption>
+<tr>
+  <th>Dep. Variable:</th>          <td>COPX</td>       <th>  R-squared (uncentered):</th>      <td>   0.494</td>
+</tr>
+<tr>
+  <th>Model:</th>                   <td>OLS</td>       <th>  Adj. R-squared (uncentered):</th> <td>   0.485</td>
+</tr>
+<tr>
+  <th>Method:</th>             <td>Least Squares</td>  <th>  F-statistic:       </th>          <td>   57.58</td>
+</tr>
+<tr>
+  <th>Date:</th>             <td>Tue, 15 Feb 2022</td> <th>  Prob (F-statistic):</th>          <td>2.73e-10</td>
+</tr>
+<tr>
+  <th>Time:</th>                 <td>03:19:26</td>     <th>  Log-Likelihood:    </th>          <td>  73.077</td>
+</tr>
+<tr>
+  <th>No. Observations:</th>      <td>    60</td>      <th>  AIC:               </th>          <td>  -144.2</td>
+</tr>
+<tr>
+  <th>Df Residuals:</th>          <td>    59</td>      <th>  BIC:               </th>          <td>  -142.1</td>
+</tr>
+<tr>
+  <th>Df Model:</th>              <td>     1</td>      <th>                     </th>              <td> </td>   
+</tr>
+<tr>
+  <th>Covariance Type:</th>      <td>nonrobust</td>    <th>                     </th>              <td> </td>   
+</tr>
+</table>
+<table class="simpletable">
+<tr>
+    <td></td>       <th>coef</th>     <th>std err</th>      <th>t</th>      <th>P>|t|</th>  <th>[0.025</th>    <th>0.975]</th>  
+</tr>
+<tr>
+  <th>^GSPC</th> <td>    1.5189</td> <td>    0.200</td> <td>    7.588</td> <td> 0.000</td> <td>    1.118</td> <td>    1.919</td>
+</tr>
+</table>
+<table class="simpletable">
+<tr>
+  <th>Omnibus:</th>       <td> 2.612</td> <th>  Durbin-Watson:     </th> <td>   1.900</td>
+</tr>
+<tr>
+  <th>Prob(Omnibus):</th> <td> 0.271</td> <th>  Jarque-Bera (JB):  </th> <td>   1.758</td>
+</tr>
+<tr>
+  <th>Skew:</th>          <td> 0.354</td> <th>  Prob(JB):          </th> <td>   0.415</td>
+</tr>
+<tr>
+  <th>Kurtosis:</th>      <td> 3.448</td> <th>  Cond. No.          </th> <td>    1.00</td>
+</tr>
+</table><br/><br/>Notes:<br/>[1] R² is computed without centering (uncentered) since the model does not contain a constant.<br/>[2] Standard Errors assume that the covariance matrix of the errors is correctly specified.
+
+
+
+<table class="simpletable">
+<caption>OLS Regression Results</caption>
+<tr>
+  <th>Dep. Variable:</th>          <td>CURE</td>       <th>  R-squared (uncentered):</th>      <td>   0.737</td>
+</tr>
+<tr>
+  <th>Model:</th>                   <td>OLS</td>       <th>  Adj. R-squared (uncentered):</th> <td>   0.732</td>
+</tr>
+<tr>
+  <th>Method:</th>             <td>Least Squares</td>  <th>  F-statistic:       </th>          <td>   165.1</td>
+</tr>
+<tr>
+  <th>Date:</th>             <td>Tue, 15 Feb 2022</td> <th>  Prob (F-statistic):</th>          <td>9.51e-19</td>
+</tr>
+<tr>
+  <th>Time:</th>                 <td>03:19:26</td>     <th>  Log-Likelihood:    </th>          <td>  73.725</td>
+</tr>
+<tr>
+  <th>No. Observations:</th>      <td>    60</td>      <th>  AIC:               </th>          <td>  -145.4</td>
+</tr>
+<tr>
+  <th>Df Residuals:</th>          <td>    59</td>      <th>  BIC:               </th>          <td>  -143.4</td>
+</tr>
+<tr>
+  <th>Df Model:</th>              <td>     1</td>      <th>                     </th>              <td> </td>   
+</tr>
+<tr>
+  <th>Covariance Type:</th>      <td>nonrobust</td>    <th>                     </th>              <td> </td>   
+</tr>
+</table>
+<table class="simpletable">
+<tr>
+    <td></td>       <th>coef</th>     <th>std err</th>      <th>t</th>      <th>P>|t|</th>  <th>[0.025</th>    <th>0.975]</th>  
+</tr>
+<tr>
+  <th>^GSPC</th> <td>    2.5446</td> <td>    0.198</td> <td>   12.851</td> <td> 0.000</td> <td>    2.148</td> <td>    2.941</td>
+</tr>
+</table>
+<table class="simpletable">
+<tr>
+  <th>Omnibus:</th>       <td> 0.495</td> <th>  Durbin-Watson:     </th> <td>   2.292</td>
+</tr>
+<tr>
+  <th>Prob(Omnibus):</th> <td> 0.781</td> <th>  Jarque-Bera (JB):  </th> <td>   0.109</td>
+</tr>
+<tr>
+  <th>Skew:</th>          <td> 0.065</td> <th>  Prob(JB):          </th> <td>   0.947</td>
+</tr>
+<tr>
+  <th>Kurtosis:</th>      <td> 3.163</td> <th>  Cond. No.          </th> <td>    1.00</td>
+</tr>
+</table><br/><br/>Notes:<br/>[1] R² is computed without centering (uncentered) since the model does not contain a constant.<br/>[2] Standard Errors assume that the covariance matrix of the errors is correctly specified.
+
+
+
+<table class="simpletable">
+<caption>OLS Regression Results</caption>
+<tr>
+  <th>Dep. Variable:</th>           <td>TAN</td>       <th>  R-squared (uncentered):</th>      <td>   0.347</td>
+</tr>
+<tr>
+  <th>Model:</th>                   <td>OLS</td>       <th>  Adj. R-squared (uncentered):</th> <td>   0.336</td>
+</tr>
+<tr>
+  <th>Method:</th>             <td>Least Squares</td>  <th>  F-statistic:       </th>          <td>   31.39</td>
+</tr>
+<tr>
+  <th>Date:</th>             <td>Tue, 15 Feb 2022</td> <th>  Prob (F-statistic):</th>          <td>5.85e-07</td>
+</tr>
+<tr>
+  <th>Time:</th>                 <td>03:19:26</td>     <th>  Log-Likelihood:    </th>          <td>  57.124</td>
+</tr>
+<tr>
+  <th>No. Observations:</th>      <td>    60</td>      <th>  AIC:               </th>          <td>  -112.2</td>
+</tr>
+<tr>
+  <th>Df Residuals:</th>          <td>    59</td>      <th>  BIC:               </th>          <td>  -110.2</td>
+</tr>
+<tr>
+  <th>Df Model:</th>              <td>     1</td>      <th>                     </th>              <td> </td>   
+</tr>
+<tr>
+  <th>Covariance Type:</th>      <td>nonrobust</td>    <th>                     </th>              <td> </td>   
+</tr>
+</table>
+<table class="simpletable">
+<tr>
+    <td></td>       <th>coef</th>     <th>std err</th>      <th>t</th>      <th>P>|t|</th>  <th>[0.025</th>    <th>0.975]</th>  
+</tr>
+<tr>
+  <th>^GSPC</th> <td>    1.4630</td> <td>    0.261</td> <td>    5.602</td> <td> 0.000</td> <td>    0.940</td> <td>    1.985</td>
+</tr>
+</table>
+<table class="simpletable">
+<tr>
+  <th>Omnibus:</th>       <td> 0.385</td> <th>  Durbin-Watson:     </th> <td>   1.288</td>
+</tr>
+<tr>
+  <th>Prob(Omnibus):</th> <td> 0.825</td> <th>  Jarque-Bera (JB):  </th> <td>   0.293</td>
+</tr>
+<tr>
+  <th>Skew:</th>          <td> 0.166</td> <th>  Prob(JB):          </th> <td>   0.864</td>
+</tr>
+<tr>
+  <th>Kurtosis:</th>      <td> 2.915</td> <th>  Cond. No.          </th> <td>    1.00</td>
+</tr>
+</table><br/><br/>Notes:<br/>[1] R² is computed without centering (uncentered) since the model does not contain a constant.<br/>[2] Standard Errors assume that the covariance matrix of the errors is correctly specified.
+
+
+
+<table class="simpletable">
+<caption>OLS Regression Results</caption>
+<tr>
+  <th>Dep. Variable:</th>          <td>TECL</td>       <th>  R-squared (uncentered):</th>      <td>   0.839</td>
+</tr>
+<tr>
+  <th>Model:</th>                   <td>OLS</td>       <th>  Adj. R-squared (uncentered):</th> <td>   0.836</td>
+</tr>
+<tr>
+  <th>Method:</th>             <td>Least Squares</td>  <th>  F-statistic:       </th>          <td>   307.7</td>
+</tr>
+<tr>
+  <th>Date:</th>             <td>Tue, 15 Feb 2022</td> <th>  Prob (F-statistic):</th>          <td>4.41e-25</td>
+</tr>
+<tr>
+  <th>Time:</th>                 <td>03:19:26</td>     <th>  Log-Likelihood:    </th>          <td>  73.347</td>
+</tr>
+<tr>
+  <th>No. Observations:</th>      <td>    60</td>      <th>  AIC:               </th>          <td>  -144.7</td>
+</tr>
+<tr>
+  <th>Df Residuals:</th>          <td>    59</td>      <th>  BIC:               </th>          <td>  -142.6</td>
+</tr>
+<tr>
+  <th>Df Model:</th>              <td>     1</td>      <th>                     </th>              <td> </td>   
+</tr>
+<tr>
+  <th>Covariance Type:</th>      <td>nonrobust</td>    <th>                     </th>              <td> </td>   
+</tr>
+</table>
+<table class="simpletable">
+<tr>
+    <td></td>       <th>coef</th>     <th>std err</th>      <th>t</th>      <th>P>|t|</th>  <th>[0.025</th>    <th>0.975]</th>  
+</tr>
+<tr>
+  <th>^GSPC</th> <td>    3.4954</td> <td>    0.199</td> <td>   17.541</td> <td> 0.000</td> <td>    3.097</td> <td>    3.894</td>
+</tr>
+</table>
+<table class="simpletable">
+<tr>
+  <th>Omnibus:</th>       <td> 1.068</td> <th>  Durbin-Watson:     </th> <td>   2.275</td>
+</tr>
+<tr>
+  <th>Prob(Omnibus):</th> <td> 0.586</td> <th>  Jarque-Bera (JB):  </th> <td>   0.956</td>
+</tr>
+<tr>
+  <th>Skew:</th>          <td> 0.079</td> <th>  Prob(JB):          </th> <td>   0.620</td>
+</tr>
+<tr>
+  <th>Kurtosis:</th>      <td> 2.402</td> <th>  Cond. No.          </th> <td>    1.00</td>
+</tr>
+</table><br/><br/>Notes:<br/>[1] R² is computed without centering (uncentered) since the model does not contain a constant.<br/>[2] Standard Errors assume that the covariance matrix of the errors is correctly specified.
+
+
+
+<table class="simpletable">
+<caption>OLS Regression Results</caption>
+<tr>
+  <th>Dep. Variable:</th>           <td>UNL</td>       <th>  R-squared (uncentered):</th>      <td>   0.002</td>
+</tr>
+<tr>
+  <th>Model:</th>                   <td>OLS</td>       <th>  Adj. R-squared (uncentered):</th> <td>  -0.015</td>
+</tr>
+<tr>
+  <th>Method:</th>             <td>Least Squares</td>  <th>  F-statistic:       </th>          <td>  0.1296</td>
+</tr>
+<tr>
+  <th>Date:</th>             <td>Tue, 15 Feb 2022</td> <th>  Prob (F-statistic):</th>           <td> 0.720</td> 
+</tr>
+<tr>
+  <th>Time:</th>                 <td>03:19:26</td>     <th>  Log-Likelihood:    </th>          <td>  65.382</td>
+</tr>
+<tr>
+  <th>No. Observations:</th>      <td>    60</td>      <th>  AIC:               </th>          <td>  -128.8</td>
+</tr>
+<tr>
+  <th>Df Residuals:</th>          <td>    59</td>      <th>  BIC:               </th>          <td>  -126.7</td>
+</tr>
+<tr>
+  <th>Df Model:</th>              <td>     1</td>      <th>                     </th>              <td> </td>   
+</tr>
+<tr>
+  <th>Covariance Type:</th>      <td>nonrobust</td>    <th>                     </th>              <td> </td>   
+</tr>
+</table>
+<table class="simpletable">
+<tr>
+    <td></td>       <th>coef</th>     <th>std err</th>      <th>t</th>      <th>P>|t|</th>  <th>[0.025</th>    <th>0.975]</th>  
+</tr>
+<tr>
+  <th>^GSPC</th> <td>   -0.0819</td> <td>    0.228</td> <td>   -0.360</td> <td> 0.720</td> <td>   -0.537</td> <td>    0.373</td>
+</tr>
+</table>
+<table class="simpletable">
+<tr>
+  <th>Omnibus:</th>       <td>16.184</td> <th>  Durbin-Watson:     </th> <td>   1.884</td>
+</tr>
+<tr>
+  <th>Prob(Omnibus):</th> <td> 0.000</td> <th>  Jarque-Bera (JB):  </th> <td>  19.067</td>
+</tr>
+<tr>
+  <th>Skew:</th>          <td> 1.154</td> <th>  Prob(JB):          </th> <td>7.24e-05</td>
+</tr>
+<tr>
+  <th>Kurtosis:</th>      <td> 4.517</td> <th>  Cond. No.          </th> <td>    1.00</td>
+</tr>
+</table><br/><br/>Notes:<br/>[1] R² is computed without centering (uncentered) since the model does not contain a constant.<br/>[2] Standard Errors assume that the covariance matrix of the errors is correctly specified.
+
+
+
+```python
+# Extract the beta coefficients
 sp500_beta = [sp500_ols[fund].params[0] for fund in range(5)]
-```
-
-
-```python
 djia_beta = [djia_ols[fund].params[0] for fund in range(5)]
 ```
 
@@ -1329,7 +1652,7 @@ $\beta$ per Fund and Market
     <tr>
       <th>^DJI</th>
       <td>1.513248</td>
-      <td>2.466365</td>
+      <td>2.466364</td>
       <td>1.335875</td>
       <td>3.213447</td>
       <td>-0.143975</td>
@@ -1341,9 +1664,9 @@ $\beta$ per Fund and Market
 
 
 ```python
-riskFree = t13.mean()[0]
-returnSP = rm["^GSPC"].mean()
-returnDJIA = rm["^DJI"].mean()
+riskFree = T13W.mean()[0]
+returnSP = Rm["^GSPC"].mean()
+returnDJIA = Rm["^DJI"].mean()
 ```
 
  $$E(R_i) = R_f + \beta(R_m -  R_f)$$
@@ -1371,7 +1694,7 @@ $E(R)$ Expected Return explained by $R_m$
 
 <style type="text/css">
 </style>
-<table id="T_d528d_">
+<table id="T_17630_">
   <thead>
     <tr>
       <th class="blank level0" >&nbsp;</th>
@@ -1384,20 +1707,20 @@ $E(R)$ Expected Return explained by $R_m$
   </thead>
   <tbody>
     <tr>
-      <th id="T_d528d_level0_row0" class="row_heading level0 row0" >^GSPC</th>
-      <td id="T_d528d_row0_col0" class="data row0 col0" >1.564%</td>
-      <td id="T_d528d_row0_col1" class="data row0 col1" >2.560%</td>
-      <td id="T_d528d_row0_col2" class="data row0 col2" >1.510%</td>
-      <td id="T_d528d_row0_col3" class="data row0 col3" >3.483%</td>
-      <td id="T_d528d_row0_col4" class="data row0 col4" >0.011%</td>
+      <th id="T_17630_level0_row0" class="row_heading level0 row0" >^GSPC</th>
+      <td id="T_17630_row0_col0" class="data row0 col0" >1.564%</td>
+      <td id="T_17630_row0_col1" class="data row0 col1" >2.560%</td>
+      <td id="T_17630_row0_col2" class="data row0 col2" >1.510%</td>
+      <td id="T_17630_row0_col3" class="data row0 col3" >3.483%</td>
+      <td id="T_17630_row0_col4" class="data row0 col4" >0.011%</td>
     </tr>
     <tr>
-      <th id="T_d528d_level0_row1" class="row_heading level0 row1" >^DJI</th>
-      <td id="T_d528d_row1_col0" class="data row1 col0" >1.559%</td>
-      <td id="T_d528d_row1_col1" class="data row1 col1" >2.484%</td>
-      <td id="T_d528d_row1_col2" class="data row1 col2" >1.387%</td>
-      <td id="T_d528d_row1_col3" class="data row1 col3" >3.209%</td>
-      <td id="T_d528d_row1_col4" class="data row1 col4" >-0.050%</td>
+      <th id="T_17630_level0_row1" class="row_heading level0 row1" >^DJI</th>
+      <td id="T_17630_row1_col0" class="data row1 col0" >1.559%</td>
+      <td id="T_17630_row1_col1" class="data row1 col1" >2.484%</td>
+      <td id="T_17630_row1_col2" class="data row1 col2" >1.387%</td>
+      <td id="T_17630_row1_col3" class="data row1 col3" >3.209%</td>
+      <td id="T_17630_row1_col4" class="data row1 col4" >-0.050%</td>
     </tr>
   </tbody>
 </table>
@@ -1407,7 +1730,7 @@ $E(R)$ Expected Return explained by $R_m$
 
 <style type="text/css">
 </style>
-<table id="T_dd4e4_">
+<table id="T_21955_">
   <thead>
     <tr>
       <th class="blank level0" >&nbsp;</th>
@@ -1420,12 +1743,12 @@ $E(R)$ Expected Return explained by $R_m$
   </thead>
   <tbody>
     <tr>
-      <th id="T_dd4e4_level0_row0" class="row_heading level0 row0" >Arithmetic Mean</th>
-      <td id="T_dd4e4_row0_col0" class="data row0 col0" >1.326%</td>
-      <td id="T_dd4e4_row0_col1" class="data row0 col1" >3.256%</td>
-      <td id="T_dd4e4_row0_col2" class="data row0 col2" >2.911%</td>
-      <td id="T_dd4e4_row0_col3" class="data row0 col3" >5.780%</td>
-      <td id="T_dd4e4_row0_col4" class="data row0 col4" >0.864%</td>
+      <th id="T_21955_level0_row0" class="row_heading level0 row0" >Arithmetic Mean</th>
+      <td id="T_21955_row0_col0" class="data row0 col0" >1.326%</td>
+      <td id="T_21955_row0_col1" class="data row0 col1" >3.256%</td>
+      <td id="T_21955_row0_col2" class="data row0 col2" >2.911%</td>
+      <td id="T_21955_row0_col3" class="data row0 col3" >5.780%</td>
+      <td id="T_21955_row0_col4" class="data row0 col4" >0.864%</td>
     </tr>
   </tbody>
 </table>
@@ -1516,7 +1839,7 @@ Buy Suggestion: if actual return is larger than expected return $R_i > E(R)$
 
 
 ```python
-table_4 = pd.concat([rm, t13], axis=1)
+table_4 = pd.concat([Rm, T13W], axis=1)
 table_4
 ```
 
@@ -1938,11 +2261,88 @@ plt.show()
 
 
     
-![png](output_52_0.png)
+![png](output_53_0.png)
     
 
 
  ### D. Essay: Differences between Dow Jones and S&P 500
+
+
+```python
+display(Markdown("$E(R)$ Expected Return explained by $R_m$"))
+display(
+    E_R.sort_index().T.style.format(PERCENT),
+    table_1["Arithmetic Mean"].sort_index().to_frame().T.style.format(PERCENT),
+)
+```
+
+
+$E(R)$ Expected Return explained by $R_m$
+
+
+
+<style type="text/css">
+</style>
+<table id="T_0d6a4_">
+  <thead>
+    <tr>
+      <th class="blank level0" >&nbsp;</th>
+      <th class="col_heading level0 col0" >COPX</th>
+      <th class="col_heading level0 col1" >CURE</th>
+      <th class="col_heading level0 col2" >TAN</th>
+      <th class="col_heading level0 col3" >TECL</th>
+      <th class="col_heading level0 col4" >UNL</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th id="T_0d6a4_level0_row0" class="row_heading level0 row0" >^GSPC</th>
+      <td id="T_0d6a4_row0_col0" class="data row0 col0" >1.564%</td>
+      <td id="T_0d6a4_row0_col1" class="data row0 col1" >2.560%</td>
+      <td id="T_0d6a4_row0_col2" class="data row0 col2" >1.510%</td>
+      <td id="T_0d6a4_row0_col3" class="data row0 col3" >3.483%</td>
+      <td id="T_0d6a4_row0_col4" class="data row0 col4" >0.011%</td>
+    </tr>
+    <tr>
+      <th id="T_0d6a4_level0_row1" class="row_heading level0 row1" >^DJI</th>
+      <td id="T_0d6a4_row1_col0" class="data row1 col0" >1.559%</td>
+      <td id="T_0d6a4_row1_col1" class="data row1 col1" >2.484%</td>
+      <td id="T_0d6a4_row1_col2" class="data row1 col2" >1.387%</td>
+      <td id="T_0d6a4_row1_col3" class="data row1 col3" >3.209%</td>
+      <td id="T_0d6a4_row1_col4" class="data row1 col4" >-0.050%</td>
+    </tr>
+  </tbody>
+</table>
+
+
+
+
+<style type="text/css">
+</style>
+<table id="T_c2bed_">
+  <thead>
+    <tr>
+      <th class="blank level0" >&nbsp;</th>
+      <th class="col_heading level0 col0" >COPX</th>
+      <th class="col_heading level0 col1" >CURE</th>
+      <th class="col_heading level0 col2" >TAN</th>
+      <th class="col_heading level0 col3" >TECL</th>
+      <th class="col_heading level0 col4" >UNL</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th id="T_c2bed_level0_row0" class="row_heading level0 row0" >Arithmetic Mean</th>
+      <td id="T_c2bed_row0_col0" class="data row0 col0" >1.326%</td>
+      <td id="T_c2bed_row0_col1" class="data row0 col1" >3.256%</td>
+      <td id="T_c2bed_row0_col2" class="data row0 col2" >2.911%</td>
+      <td id="T_c2bed_row0_col3" class="data row0 col3" >5.780%</td>
+      <td id="T_c2bed_row0_col4" class="data row0 col4" >0.864%</td>
+    </tr>
+  </tbody>
+</table>
+
+
 
 
 ```python
@@ -1952,6 +2352,7 @@ returns_tidy = returns_tidy.rename(columns={"variable": "Fund", "value": "Return
 
 
 ```python
+# This complicated code is to make running possible on Google Colab
 try:
     tidy_data = pd.concat([pd.concat([table_4] * 5), returns_tidy], axis=1)
     tidy_data.to_pickle("data/tidy_huh.pkl")
@@ -1972,7 +2373,7 @@ plt.show()
 
 
     
-![png](output_56_0.png)
+![png](output_58_0.png)
     
 
 
@@ -1985,7 +2386,176 @@ plt.show()
 
 
     
-![png](output_57_0.png)
+![png](output_59_0.png)
+    
+
+
+ In my particular case, the differences in Expected Return explained by market
+ returns by the S&P 500 or the Dow Jones Industrial Average were little.
+
+ The only fund that didn’t perform identically was
+ [**UNL**](https://finance.yahoo.com/quote/UNL?p=UNL](https://www.google.com/url?q=https://finance.yahoo.com/quote/UNL?p%3DUNL&sa=D&source=editors&ust=1644906676549149&usg=AOvVaw2_AqMFz1d5je1uQkf0XAP0).
+ This can be explained by the negative beta values ($\beta_{\text{S&P}}=-0.08$,
+ $\beta_{\text{DJIA}}=-0.14$) from its regression with market returns. While this
+ fund had the worst mean individual returns ($R_{\text{UNL}}=10.9\%$ monthly), it
+ compensated this by having the lowest risk ($\sigma=28.06\%$) of the portfolio.
+ UNL also served as a hedge against all other assets in the portfolio and the
+ expected return. Its average correlation with all the assets stands at 3.5% (all
+ correlations are negative with all assets).
+
+ However, by running a correlation analysis between the S&P 500 and the Dow
+ Jones, it is easy to see why the results are consistently similar; they are 96%
+ correlated with each other.
+
+ Another reason, in my opinion why the results are so similar is the ultra-low
+ Treasury rates observed throughout the 5-year period. People have little to no
+ incentive to purchase Treasury bills.
+
+ Lastly, this period has been one for analysis galore. Supply shocks, demand
+ shocks. Oil and energy plunging in the heart of the pandemic and now reaching
+ almost $100 a barrel.
+
+ It has been characterized by a very easy monetary policy throughout, it was
+ defined by three key events.
+
+ 1. Trump Administration monetary policy:
+
+    1. Tax Cuts and Jobs Act (TCJA)
+
+ 2. COVID-19 Market Crash
+    1. Coronavirus Aid, Relief, and Economic Security Act (CARES Act): $2.2
+       trillion economic stimulus
+    2. Low Treasury Yields
+    3. Federal Reserve
+       1. Monetary Easing and Purchase of Treasury Bonds
+ 3. COVID-19 Recovery
+    1. Demand shocks
+    2. Supply chain inefficiencies
+
+ People have never had more reasons to trade stocks. All between being
+ quarantined in a pandemic with little to do and federal money being put in
+ Americans’ pockets, has produced sky-high records in the market.
+
+
+
+```python
+pd.melt(pd.concat([returns, table_4], axis=1))
+```
+
+
+
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>variable</th>
+      <th>value</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>COPX</td>
+      <td>-0.050628</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>COPX</td>
+      <td>-0.043089</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>COPX</td>
+      <td>-0.046366</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>COPX</td>
+      <td>-0.055166</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>COPX</td>
+      <td>0.038100</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>475</th>
+      <td>GS3M</td>
+      <td>0.000033</td>
+    </tr>
+    <tr>
+      <th>476</th>
+      <td>GS3M</td>
+      <td>0.000042</td>
+    </tr>
+    <tr>
+      <th>477</th>
+      <td>GS3M</td>
+      <td>0.000042</td>
+    </tr>
+    <tr>
+      <th>478</th>
+      <td>GS3M</td>
+      <td>0.000050</td>
+    </tr>
+    <tr>
+      <th>479</th>
+      <td>GS3M</td>
+      <td>0.000125</td>
+    </tr>
+  </tbody>
+</table>
+<p>480 rows × 2 columns</p>
+</div>
+
+
+
+
+```python
+sns.displot(
+    (
+        pd.melt(
+            pd.concat([returns, table_4], axis=1)[
+                ["COPX", "CURE", "TAN", "TECL", "UNL", "^DJI", "^GSPC"]
+            ]
+        )
+    ),
+    x="value",
+    hue="variable",
+    kind="kde",
+)
+```
+
+
+
+
+    <seaborn.axisgrid.FacetGrid at 0x7fb773ba2040>
+
+
+
+
+    
+![png](output_62_1.png)
     
 
 
@@ -2005,13 +2575,13 @@ plt.show()
 
 
     
-![png](output_58_0.png)
+![png](output_63_0.png)
     
 
 
 
 ```python
-# sns.set(rc={"figure.figsize": (8, 8)})
+sns.set(rc={"figure.figsize": (6, 6)})
 sns.heatmap(
     table_4.corr(),
     annot=True,
@@ -2025,9 +2595,14 @@ plt.show()
 
 
     
-![png](output_59_0.png)
+![png](output_64_0.png)
     
 
+
+
+```python
+# sns.reset_defaults()
+```
 
  ### E. Runs Test: S&P 500
 
@@ -2044,7 +2619,7 @@ plt.show()
 
 
 ```python
-sp500 = rm["^GSPC"]
+sp500 = Rm["^GSPC"]
 ```
 
 
@@ -2124,6 +2699,35 @@ Z
 
 
 ```python
+Z, p = runs.runstest_1samp(Rm["^GSPC"])
+runs.runstest_1samp(Rm["^GSPC"])
+```
+
+
+
+
+    (0.49131080387234544, 0.6232066396680263)
+
+
+
+ #### Runs Test Interpretation
+
+
+```python
+np.sign(sp500).value_counts()
+```
+
+
+
+
+     1.0    44
+    -1.0    16
+    Name: ^GSPC, dtype: int64
+
+
+
+
+```python
 display(
     Markdown(
         f"""Our Z statistic of **{Z:.3f}** is not close to the standard
@@ -2140,7 +2744,7 @@ faster method for this through `statsmodels`."""
 ```
 
 
-Our Z statistic of **-0.491** is not close to the standard
+Our Z statistic of **0.491** is not close to the standard
 normal distribution mean of 0.
 
 We cannot be 95 percent certain that our observed stock prices
@@ -2149,19 +2753,6 @@ did not happen by chance unless we get a Z statistic whose absolute value is
 
 I did all the work above _show my work_, but thankfully Python does have a
 faster method for this through `statsmodels`.
-
-
-
-```python
-Z, p = runs.runstest_1samp(rm["^GSPC"])
-runs.runstest_1samp(rm["^GSPC"])
-```
-
-
-
-
-    (0.49131080387234544, 0.6232066396680263)
-
 
 
 
@@ -2182,8 +2773,6 @@ corresponding p-value is **$p=0.623$**. Since this p-value is not less than
 α = .05, we fail to reject the null hypothesis. We have sufficient evidence to
 say that the data was produced in a random manner.
 
-
- #### Runs Test Interpretation
 
  ## Part Three
 
@@ -2209,6 +2798,7 @@ say that the data was produced in a random manner.
 
 
 ```python
+# Equal weighted portfolio weights
 w = np.array([[0.2] * 5])
 ```
 
@@ -2231,7 +2821,7 @@ table_5.style.format(proper_format)
 
 <style type="text/css">
 </style>
-<table id="T_71e50_">
+<table id="T_42739_">
   <thead>
     <tr>
       <th class="blank level0" >&nbsp;</th>
@@ -2242,10 +2832,10 @@ table_5.style.format(proper_format)
   </thead>
   <tbody>
     <tr>
-      <th id="T_71e50_level0_row0" class="row_heading level0 row0" >Equally Weighted Portfolio</th>
-      <td id="T_71e50_row0_col0" class="data row0 col0" >2.827%</td>
-      <td id="T_71e50_row0_col1" class="data row0 col1" >2.071%</td>
-      <td id="T_71e50_row0_col2" class="data row0 col2" >8.410%</td>
+      <th id="T_42739_level0_row0" class="row_heading level0 row0" >Equally Weighted Portfolio</th>
+      <td id="T_42739_row0_col0" class="data row0 col0" >2.827%</td>
+      <td id="T_42739_row0_col1" class="data row0 col1" >2.071%</td>
+      <td id="T_42739_row0_col2" class="data row0 col2" >8.410%</td>
     </tr>
   </tbody>
 </table>
@@ -2306,7 +2896,7 @@ plt.show()
 
 
     
-![png](output_83_0.png)
+![png](output_90_0.png)
     
 
 
@@ -2350,7 +2940,7 @@ investments.plot_bokeh.line(
 
 
 
-<div class="bk-root" id="0a461876-c036-4d62-80e2-bcc89ac7fb76" data-root-id="1003"></div>
+<div class="bk-root" id="7d22167a-99c3-4fc5-84ef-7f062c2fd8ff" data-root-id="1003"></div>
 
 
 
@@ -2379,7 +2969,7 @@ investments.plot_bokeh.line(
 
 
 
- ## Part 4
+ ## Part Four
 
  Using the five-year performance statistics of your five funds and the
  five-fund portfolio, determine and show graphically the efficient set using
@@ -2403,7 +2993,7 @@ mean_var.style.format(proper_format)
 
 <style type="text/css">
 </style>
-<table id="T_aa2fa_">
+<table id="T_48a10_">
   <thead>
     <tr>
       <th class="blank level0" >&nbsp;</th>
@@ -2413,34 +3003,34 @@ mean_var.style.format(proper_format)
   </thead>
   <tbody>
     <tr>
-      <th id="T_aa2fa_level0_row0" class="row_heading level0 row0" >COPX</th>
-      <td id="T_aa2fa_row0_col0" class="data row0 col0" >1.326%</td>
-      <td id="T_aa2fa_row0_col1" class="data row0 col1" >9.975%</td>
+      <th id="T_48a10_level0_row0" class="row_heading level0 row0" >COPX</th>
+      <td id="T_48a10_row0_col0" class="data row0 col0" >1.326%</td>
+      <td id="T_48a10_row0_col1" class="data row0 col1" >9.975%</td>
     </tr>
     <tr>
-      <th id="T_aa2fa_level0_row1" class="row_heading level0 row1" >CURE</th>
-      <td id="T_aa2fa_row1_col0" class="data row1 col0" >3.256%</td>
-      <td id="T_aa2fa_row1_col1" class="data row1 col1" >13.413%</td>
+      <th id="T_48a10_level0_row1" class="row_heading level0 row1" >CURE</th>
+      <td id="T_48a10_row1_col0" class="data row1 col0" >3.256%</td>
+      <td id="T_48a10_row1_col1" class="data row1 col1" >13.413%</td>
     </tr>
     <tr>
-      <th id="T_aa2fa_level0_row2" class="row_heading level0 row2" >TAN</th>
-      <td id="T_aa2fa_row2_col0" class="data row2 col0" >2.911%</td>
-      <td id="T_aa2fa_row2_col1" class="data row2 col1" >11.186%</td>
+      <th id="T_48a10_level0_row2" class="row_heading level0 row2" >TAN</th>
+      <td id="T_48a10_row2_col0" class="data row2 col0" >2.911%</td>
+      <td id="T_48a10_row2_col1" class="data row2 col1" >11.186%</td>
     </tr>
     <tr>
-      <th id="T_aa2fa_level0_row3" class="row_heading level0 row3" >TECL</th>
-      <td id="T_aa2fa_row3_col0" class="data row3 col0" >5.780%</td>
-      <td id="T_aa2fa_row3_col1" class="data row3 col1" >16.799%</td>
+      <th id="T_48a10_level0_row3" class="row_heading level0 row3" >TECL</th>
+      <td id="T_48a10_row3_col0" class="data row3 col0" >5.780%</td>
+      <td id="T_48a10_row3_col1" class="data row3 col1" >16.799%</td>
     </tr>
     <tr>
-      <th id="T_aa2fa_level0_row4" class="row_heading level0 row4" >UNL</th>
-      <td id="T_aa2fa_row4_col0" class="data row4 col0" >0.864%</td>
-      <td id="T_aa2fa_row4_col1" class="data row4 col1" >8.101%</td>
+      <th id="T_48a10_level0_row4" class="row_heading level0 row4" >UNL</th>
+      <td id="T_48a10_row4_col0" class="data row4 col0" >0.864%</td>
+      <td id="T_48a10_row4_col1" class="data row4 col1" >8.101%</td>
     </tr>
     <tr>
-      <th id="T_aa2fa_level0_row5" class="row_heading level0 row5" >Equally Weighted Portfolio</th>
-      <td id="T_aa2fa_row5_col0" class="data row5 col0" >2.827%</td>
-      <td id="T_aa2fa_row5_col1" class="data row5 col1" >8.410%</td>
+      <th id="T_48a10_level0_row5" class="row_heading level0 row5" >Equally Weighted Portfolio</th>
+      <td id="T_48a10_row5_col0" class="data row5 col0" >2.827%</td>
+      <td id="T_48a10_row5_col1" class="data row5 col1" >8.410%</td>
     </tr>
   </tbody>
 </table>
@@ -2465,7 +3055,7 @@ plt.gca().xaxis.set_major_formatter(mtick.PercentFormatter(1))
 
 
     
-![png](output_92_0.png)
+![png](output_99_0.png)
     
 
 
@@ -2678,7 +3268,7 @@ plt.gca().xaxis.set_major_formatter(mtick.PercentFormatter(1))
 
 
     
-![png](output_101_0.png)
+![png](output_108_0.png)
     
 
 
@@ -2706,7 +3296,29 @@ plt.gca().xaxis.set_major_formatter(mtick.PercentFormatter(1))
 
 
 ```python
-def mean_variance_frontier(required_return: float, timeframe="Y", df=returns):
+def mean_variance_frontier(
+    required_return: float, timeframe: str = "Y", df: pd.DataFrame = returns
+) -> List:
+    """
+    Helper function to calculate the mean-variance frontier.
+
+    Parameters
+    ----------
+    required_return : float
+        Required rate of return.
+    timeframe : str, optional
+        Annual timeframe for returns, if different parameter will return monthly
+        results, by default "Y"
+    df : pd.DataFrame, optional
+        DataFrame to pass to analyze, by default returns
+
+    Returns
+    -------
+    List
+        Returns a list of the following elements:
+        [Expected Return, Standard Deviation, W1, W2, W3, W4, W5]
+    """
+
     if timeframe == "Y":
         mu = ((1 + returns.mean()) ** 12) - 1
         V_inv = np.linalg.inv(df.cov(ddof=0) * 12)
@@ -2735,7 +3347,20 @@ def mean_variance_frontier(required_return: float, timeframe="Y", df=returns):
 
 
 ```python
-def frontier_df(required_return):
+def frontier_df(required_return: float) -> pd.DataFrame:
+    """
+    Helper function to generate a dataframe of the mean-variance frontier.
+
+    Parameters
+    ----------
+    required_return : float
+        Required rate of return.
+
+    Returns
+    -------
+    pd.DataFrame
+        Mean Variance Frontier in DataFrame format.
+    """
     frontier = [mean_variance_frontier(i) for i in np.linspace(0, required_return, 500)]
     frontier_pd = pd.DataFrame(frontier)
     frontier_pd.columns = functools.reduce(
@@ -2898,23 +3523,34 @@ with pd.option_context("display.float_format", PERCENT.format):
 </div>
 
 
+ Now to annualize the results:
+
 
 ```python
-annual_mean_var = mean_var.copy()
+def monthly_to_annual(df: pd.DataFrame = mean_var) -> pd.DataFrame:
+    """
+    Helper function to convert monthly returns to annual returns.
+
+    Parameters
+    ----------
+    df : pd.DataFrame, optional
+        _description_, by default mean_var
+
+    Returns
+    -------
+    pd.DataFrame
+        Annualized returns in DataFrame format.
+    """
+
+    df["Expected Return"] = ((df["Expected Return"] + 1) ** 12) - 1
+    df["Standard Deviation"] = df["Standard Deviation"] * (12 ** 0.5)
+
+    return df
 ```
 
 
 ```python
-annual_mean_var["Expected Return"] = (
-    (annual_mean_var["Expected Return"] + 1) ** 12
-) - 1
-```
-
-
-```python
-annual_mean_var["Standard Deviation"] = annual_mean_var["Standard Deviation"] * (
-    12 ** 0.5
-)
+annual_mean_var = monthly_to_annual()
 ```
 
 
@@ -2997,7 +3633,8 @@ with pd.option_context("display.float_format", PERCENT.format):
 
 
 ```python
-mean_var_plot = sns.scatterplot(data=frontier_df(0.4), x="SD(P)", y="E(Rp)").set(
+sns.set(rc={"figure.figsize": (10, 8)})
+mean_var_plot = sns.scatterplot(data=frontier_df(0.4), x="SD(P)", y="E(Rp)", s=5).set(
     title="Mean Variance Plot"
 )
 plt.gca().yaxis.set_major_formatter(mtick.PercentFormatter(1))
@@ -3006,7 +3643,7 @@ plt.gca().xaxis.set_major_formatter(mtick.PercentFormatter(1))
 
 
     
-![png](output_112_0.png)
+![png](output_119_0.png)
     
 
 
@@ -3016,7 +3653,11 @@ plt.gca().xaxis.set_major_formatter(mtick.PercentFormatter(1))
 
 ```python
 sns.scatterplot(
-    data=annual_mean_var, x="Standard Deviation", y="Expected Return", hue="Index"
+    data=annual_mean_var,
+    x="Standard Deviation",
+    y="Expected Return",
+    hue="Index",
+    style="Index",
 ).set(title="Mean Variance Plot")
 plt.gca().yaxis.set_major_formatter(mtick.PercentFormatter(1))
 plt.gca().xaxis.set_major_formatter(mtick.PercentFormatter(1))
@@ -3030,7 +3671,7 @@ plt.gca().xaxis.set_major_formatter(mtick.PercentFormatter(1))
 
 
     
-![png](output_114_0.png)
+![png](output_121_0.png)
     
 
 
@@ -3045,16 +3686,13 @@ port_sd = []
 port_w = []
 
 num_assets = len(funds)
-num_portfolios = 10000
-```
+num_portfolios = 25000
 
-
-```python
 for _ in range(num_portfolios):
     # Random generation of weights
     weights = np.random.random(num_assets)
     # Normalization of weights
-    weights = weights / np.sum(weights)
+    weights /= np.sum(weights)
     port_w.append(weights)
 
     port_returns.append(np.dot(weights, ((1 + returns.mean()) ** 12) - 1))
@@ -3116,53 +3754,53 @@ randomPortfolios.head()
   <tbody>
     <tr>
       <th>0</th>
-      <td>0.360461</td>
-      <td>0.303170</td>
-      <td>0.276140</td>
-      <td>0.357432</td>
-      <td>0.225173</td>
-      <td>0.044128</td>
-      <td>0.097127</td>
+      <td>0.540686</td>
+      <td>0.370767</td>
+      <td>0.133085</td>
+      <td>0.185862</td>
+      <td>0.406883</td>
+      <td>0.273683</td>
+      <td>0.000487</td>
     </tr>
     <tr>
       <th>1</th>
-      <td>0.573129</td>
-      <td>0.373718</td>
-      <td>0.091265</td>
-      <td>0.077072</td>
-      <td>0.445247</td>
-      <td>0.347031</td>
-      <td>0.039385</td>
+      <td>0.346542</td>
+      <td>0.271608</td>
+      <td>0.282774</td>
+      <td>0.284857</td>
+      <td>0.039434</td>
+      <td>0.123697</td>
+      <td>0.269238</td>
     </tr>
     <tr>
       <th>2</th>
-      <td>0.364048</td>
-      <td>0.298462</td>
-      <td>0.280670</td>
-      <td>0.330658</td>
-      <td>0.204899</td>
-      <td>0.066465</td>
-      <td>0.117308</td>
+      <td>0.549661</td>
+      <td>0.381204</td>
+      <td>0.229812</td>
+      <td>0.247287</td>
+      <td>0.169410</td>
+      <td>0.335285</td>
+      <td>0.018206</td>
     </tr>
     <tr>
       <th>3</th>
-      <td>0.378374</td>
-      <td>0.291082</td>
-      <td>0.235345</td>
-      <td>0.331516</td>
-      <td>0.142778</td>
-      <td>0.108187</td>
-      <td>0.182174</td>
+      <td>0.476688</td>
+      <td>0.336315</td>
+      <td>0.201346</td>
+      <td>0.196404</td>
+      <td>0.327334</td>
+      <td>0.217455</td>
+      <td>0.057461</td>
     </tr>
     <tr>
       <th>4</th>
-      <td>0.423337</td>
-      <td>0.285114</td>
-      <td>0.153722</td>
-      <td>0.246766</td>
-      <td>0.145126</td>
-      <td>0.201722</td>
-      <td>0.252664</td>
+      <td>0.481745</td>
+      <td>0.282144</td>
+      <td>0.045196</td>
+      <td>0.064798</td>
+      <td>0.126438</td>
+      <td>0.361411</td>
+      <td>0.402157</td>
     </tr>
   </tbody>
 </table>
@@ -3183,7 +3821,7 @@ plt.gca().xaxis.set_major_formatter(mtick.PercentFormatter(1))
 
 
     
-![png](output_122_0.png)
+![png](output_128_0.png)
     
 
 
@@ -3235,13 +3873,13 @@ min_vol_port
   <tbody>
     <tr>
       <th>Random Minimum Variance Portfolio</th>
-      <td>0.210639</td>
-      <td>0.20265</td>
-      <td>0.199777</td>
-      <td>0.033067</td>
-      <td>0.239106</td>
-      <td>0.006092</td>
-      <td>0.521958</td>
+      <td>0.21054</td>
+      <td>0.201376</td>
+      <td>0.20451</td>
+      <td>0.072943</td>
+      <td>0.194902</td>
+      <td>0.004464</td>
+      <td>0.523181</td>
     </tr>
   </tbody>
 </table>
@@ -3378,7 +4016,7 @@ display(annual_mean_var, w_star)
 </div>
 
 
- ##### Minimum Volatility
+  ##### Maximum Sharpe Ratio
 
 
 ```python
@@ -3432,13 +4070,13 @@ optimal_risky_port
   <tbody>
     <tr>
       <th>Random Maximum Sharpe Ratio Portfolio</th>
-      <td>0.575313</td>
-      <td>0.328215</td>
-      <td>0.016292</td>
-      <td>0.00279</td>
-      <td>0.144486</td>
-      <td>0.492866</td>
-      <td>0.343566</td>
+      <td>0.55174</td>
+      <td>0.314097</td>
+      <td>0.00805</td>
+      <td>0.008213</td>
+      <td>0.159496</td>
+      <td>0.458261</td>
+      <td>0.36598</td>
     </tr>
   </tbody>
 </table>
@@ -3538,14 +4176,14 @@ with pd.option_context("display.float_format", PERCENT.format):
     <tr>
       <th>7</th>
       <td>Random Minimum Variance Portfolio</td>
-      <td>21.064%</td>
-      <td>20.265%</td>
+      <td>21.054%</td>
+      <td>20.138%</td>
     </tr>
     <tr>
       <th>8</th>
       <td>Random Maximum Sharpe Ratio Portfolio</td>
-      <td>57.531%</td>
-      <td>32.822%</td>
+      <td>55.174%</td>
+      <td>31.410%</td>
     </tr>
   </tbody>
 </table>
@@ -3554,10 +4192,161 @@ with pd.option_context("display.float_format", PERCENT.format):
 
 
 ```python
+randomPortfolios
+```
+
+
+
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Expected Return</th>
+      <th>Standard Deviation</th>
+      <th>COPX</th>
+      <th>CURE</th>
+      <th>TAN</th>
+      <th>TECL</th>
+      <th>UNL</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>0.540686</td>
+      <td>0.370767</td>
+      <td>0.133085</td>
+      <td>0.185862</td>
+      <td>0.406883</td>
+      <td>0.273683</td>
+      <td>0.000487</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>0.346542</td>
+      <td>0.271608</td>
+      <td>0.282774</td>
+      <td>0.284857</td>
+      <td>0.039434</td>
+      <td>0.123697</td>
+      <td>0.269238</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>0.549661</td>
+      <td>0.381204</td>
+      <td>0.229812</td>
+      <td>0.247287</td>
+      <td>0.169410</td>
+      <td>0.335285</td>
+      <td>0.018206</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>0.476688</td>
+      <td>0.336315</td>
+      <td>0.201346</td>
+      <td>0.196404</td>
+      <td>0.327334</td>
+      <td>0.217455</td>
+      <td>0.057461</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>0.481745</td>
+      <td>0.282144</td>
+      <td>0.045196</td>
+      <td>0.064798</td>
+      <td>0.126438</td>
+      <td>0.361411</td>
+      <td>0.402157</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>24995</th>
+      <td>0.445587</td>
+      <td>0.324362</td>
+      <td>0.222908</td>
+      <td>0.320395</td>
+      <td>0.142229</td>
+      <td>0.192698</td>
+      <td>0.121770</td>
+    </tr>
+    <tr>
+      <th>24996</th>
+      <td>0.349139</td>
+      <td>0.246964</td>
+      <td>0.191712</td>
+      <td>0.167539</td>
+      <td>0.208793</td>
+      <td>0.122916</td>
+      <td>0.309041</td>
+    </tr>
+    <tr>
+      <th>24997</th>
+      <td>0.375222</td>
+      <td>0.279477</td>
+      <td>0.215014</td>
+      <td>0.295437</td>
+      <td>0.156662</td>
+      <td>0.116281</td>
+      <td>0.216605</td>
+    </tr>
+    <tr>
+      <th>24998</th>
+      <td>0.451281</td>
+      <td>0.306053</td>
+      <td>0.182575</td>
+      <td>0.070958</td>
+      <td>0.367860</td>
+      <td>0.227623</td>
+      <td>0.150984</td>
+    </tr>
+    <tr>
+      <th>24999</th>
+      <td>0.380303</td>
+      <td>0.303038</td>
+      <td>0.148619</td>
+      <td>0.480771</td>
+      <td>0.033880</td>
+      <td>0.092403</td>
+      <td>0.244327</td>
+    </tr>
+  </tbody>
+</table>
+<p>25000 rows × 7 columns</p>
+</div>
+
+
+
+
+```python
 mean_var_plot = sns.scatterplot(
-    data=randomPortfolios,
-    x="Standard Deviation",
-    y="Expected Return",
+    data=randomPortfolios, x="Standard Deviation", y="Expected Return", s=10
 ).set(title="Mean Variance Plot")
 
 
@@ -3575,7 +4364,7 @@ plt.gca().xaxis.set_major_formatter(mtick.PercentFormatter(1))
 
 
     
-![png](output_134_0.png)
+![png](output_141_0.png)
     
 
 
@@ -3584,7 +4373,7 @@ plt.gca().xaxis.set_major_formatter(mtick.PercentFormatter(1))
  least I think so) that this is due to the lack of constraint of short-seling
  in the mean variance frontier matrix formulation
 
- ## Part 5: Performance
+ ## Part Five: Performance
 
  Rank the performance of the five funds and the five-fund portfolio according
  to the following criteria:
@@ -3676,13 +4465,13 @@ with pd.option_context("display.float_format", PERCENT.format):
     </tr>
     <tr>
       <th>Random Minimum Variance Portfolio</th>
-      <td>21.064%</td>
-      <td>20.265%</td>
+      <td>21.054%</td>
+      <td>20.138%</td>
     </tr>
     <tr>
       <th>Random Maximum Sharpe Ratio Portfolio</th>
-      <td>57.531%</td>
-      <td>32.822%</td>
+      <td>55.174%</td>
+      <td>31.410%</td>
     </tr>
   </tbody>
 </table>
@@ -3695,6 +4484,214 @@ annual_mean_var["Sharpe Ratio"] = (
     annual_mean_var["Expected Return"] - annual_RiskFree
 ) / annual_mean_var["Standard Deviation"]
 ```
+
+
+```python
+randomPortfolios["Sharpe Ratio"] = (
+    randomPortfolios["Expected Return"] - riskFree
+) / randomPortfolios["Standard Deviation"]
+```
+
+
+```python
+randomPortfolios
+```
+
+
+
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Expected Return</th>
+      <th>Standard Deviation</th>
+      <th>COPX</th>
+      <th>CURE</th>
+      <th>TAN</th>
+      <th>TECL</th>
+      <th>UNL</th>
+      <th>Sharpe Ratio</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>0.540686</td>
+      <td>0.370767</td>
+      <td>0.133085</td>
+      <td>0.185862</td>
+      <td>0.406883</td>
+      <td>0.273683</td>
+      <td>0.000487</td>
+      <td>1.455859</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>0.346542</td>
+      <td>0.271608</td>
+      <td>0.282774</td>
+      <td>0.284857</td>
+      <td>0.039434</td>
+      <td>0.123697</td>
+      <td>0.269238</td>
+      <td>1.272572</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>0.549661</td>
+      <td>0.381204</td>
+      <td>0.229812</td>
+      <td>0.247287</td>
+      <td>0.169410</td>
+      <td>0.335285</td>
+      <td>0.018206</td>
+      <td>1.439543</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>0.476688</td>
+      <td>0.336315</td>
+      <td>0.201346</td>
+      <td>0.196404</td>
+      <td>0.327334</td>
+      <td>0.217455</td>
+      <td>0.057461</td>
+      <td>1.414709</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>0.481745</td>
+      <td>0.282144</td>
+      <td>0.045196</td>
+      <td>0.064798</td>
+      <td>0.126438</td>
+      <td>0.361411</td>
+      <td>0.402157</td>
+      <td>1.704248</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>24995</th>
+      <td>0.445587</td>
+      <td>0.324362</td>
+      <td>0.222908</td>
+      <td>0.320395</td>
+      <td>0.142229</td>
+      <td>0.192698</td>
+      <td>0.121770</td>
+      <td>1.370954</td>
+    </tr>
+    <tr>
+      <th>24996</th>
+      <td>0.349139</td>
+      <td>0.246964</td>
+      <td>0.191712</td>
+      <td>0.167539</td>
+      <td>0.208793</td>
+      <td>0.122916</td>
+      <td>0.309041</td>
+      <td>1.410078</td>
+    </tr>
+    <tr>
+      <th>24997</th>
+      <td>0.375222</td>
+      <td>0.279477</td>
+      <td>0.215014</td>
+      <td>0.295437</td>
+      <td>0.156662</td>
+      <td>0.116281</td>
+      <td>0.216605</td>
+      <td>1.339363</td>
+    </tr>
+    <tr>
+      <th>24998</th>
+      <td>0.451281</td>
+      <td>0.306053</td>
+      <td>0.182575</td>
+      <td>0.070958</td>
+      <td>0.367860</td>
+      <td>0.227623</td>
+      <td>0.150984</td>
+      <td>1.471575</td>
+    </tr>
+    <tr>
+      <th>24999</th>
+      <td>0.380303</td>
+      <td>0.303038</td>
+      <td>0.148619</td>
+      <td>0.480771</td>
+      <td>0.033880</td>
+      <td>0.092403</td>
+      <td>0.244327</td>
+      <td>1.251995</td>
+    </tr>
+  </tbody>
+</table>
+<p>25000 rows × 8 columns</p>
+</div>
+
+
+
+
+```python
+sns.set(rc={"figure.figsize": (16, 9)})
+
+sns.scatterplot(data=frontier_df(0.8), x="SD(P)", y="E(Rp)", s=30)
+
+results_plot = sns.scatterplot(
+    data=annual_mean_var,
+    x="Standard Deviation",
+    y="Expected Return",
+    style="Index",
+    hue="Index",
+    s=600,
+    marker="*",
+    palette="bright",
+)
+
+mean_var_plot = sns.scatterplot(
+    data=randomPortfolios,
+    x="Standard Deviation",
+    y="Expected Return",
+    palette="viridis",
+    hue="Sharpe Ratio",
+    s=15,
+).set(title="Mean Variance Plot: Random Portfolios by Sharpe Ratios")
+
+plt.gca().yaxis.set_major_formatter(mtick.PercentFormatter(1))
+plt.gca().xaxis.set_major_formatter(mtick.PercentFormatter(1))
+```
+
+
+    
+![png](output_149_0.png)
+    
+
 
  ### Treynor Measure
 
@@ -3749,7 +4746,7 @@ annual_mean_var.set_index("Index").style.format(
 
 <style type="text/css">
 </style>
-<table id="T_21d05_">
+<table id="T_482a7_">
   <thead>
     <tr>
       <th class="blank level0" >&nbsp;</th>
@@ -3770,76 +4767,76 @@ annual_mean_var.set_index("Index").style.format(
   </thead>
   <tbody>
     <tr>
-      <th id="T_21d05_level0_row0" class="row_heading level0 row0" >COPX</th>
-      <td id="T_21d05_row0_col0" class="data row0 col0" >17.123%</td>
-      <td id="T_21d05_row0_col1" class="data row0 col1" >34.553%</td>
-      <td id="T_21d05_row0_col2" class="data row0 col2" >0.105810</td>
-      <td id="T_21d05_row0_col3" class="data row0 col3" >1.516074</td>
-      <td id="T_21d05_row0_col4" class="data row0 col4" >0.105810</td>
+      <th id="T_482a7_level0_row0" class="row_heading level0 row0" >COPX</th>
+      <td id="T_482a7_row0_col0" class="data row0 col0" >17.123%</td>
+      <td id="T_482a7_row0_col1" class="data row0 col1" >34.553%</td>
+      <td id="T_482a7_row0_col2" class="data row0 col2" >0.105810</td>
+      <td id="T_482a7_row0_col3" class="data row0 col3" >1.516074</td>
+      <td id="T_482a7_row0_col4" class="data row0 col4" >0.105810</td>
     </tr>
     <tr>
-      <th id="T_21d05_level0_row1" class="row_heading level0 row1" >CURE</th>
-      <td id="T_21d05_row1_col0" class="data row1 col0" >46.883%</td>
-      <td id="T_21d05_row1_col1" class="data row1 col1" >46.464%</td>
-      <td id="T_21d05_row1_col2" class="data row1 col2" >0.182804</td>
-      <td id="T_21d05_row1_col3" class="data row1 col3" >2.505496</td>
-      <td id="T_21d05_row1_col4" class="data row1 col4" >0.182804</td>
+      <th id="T_482a7_level0_row1" class="row_heading level0 row1" >CURE</th>
+      <td id="T_482a7_row1_col0" class="data row1 col0" >46.883%</td>
+      <td id="T_482a7_row1_col1" class="data row1 col1" >46.464%</td>
+      <td id="T_482a7_row1_col2" class="data row1 col2" >0.182804</td>
+      <td id="T_482a7_row1_col3" class="data row1 col3" >2.505496</td>
+      <td id="T_482a7_row1_col4" class="data row1 col4" >0.182804</td>
     </tr>
     <tr>
-      <th id="T_21d05_level0_row2" class="row_heading level0 row2" >TAN</th>
-      <td id="T_21d05_row2_col0" class="data row2 col0" >41.105%</td>
-      <td id="T_21d05_row2_col1" class="data row2 col1" >38.750%</td>
-      <td id="T_21d05_row2_col2" class="data row2 col2" >0.286000</td>
-      <td id="T_21d05_row2_col3" class="data row2 col3" >1.399419</td>
-      <td id="T_21d05_row2_col4" class="data row2 col4" >0.286000</td>
+      <th id="T_482a7_level0_row2" class="row_heading level0 row2" >TAN</th>
+      <td id="T_482a7_row2_col0" class="data row2 col0" >41.105%</td>
+      <td id="T_482a7_row2_col1" class="data row2 col1" >38.750%</td>
+      <td id="T_482a7_row2_col2" class="data row2 col2" >0.286000</td>
+      <td id="T_482a7_row2_col3" class="data row2 col3" >1.399419</td>
+      <td id="T_482a7_row2_col4" class="data row2 col4" >0.286000</td>
     </tr>
     <tr>
-      <th id="T_21d05_level0_row3" class="row_heading level0 row3" >TECL</th>
-      <td id="T_21d05_row3_col0" class="data row3 col0" >96.264%</td>
-      <td id="T_21d05_row3_col1" class="data row3 col1" >58.195%</td>
-      <td id="T_21d05_row3_col2" class="data row3 col2" >0.283752</td>
-      <td id="T_21d05_row3_col3" class="data row3 col3" >3.354419</td>
-      <td id="T_21d05_row3_col4" class="data row3 col4" >0.283752</td>
+      <th id="T_482a7_level0_row3" class="row_heading level0 row3" >TECL</th>
+      <td id="T_482a7_row3_col0" class="data row3 col0" >96.264%</td>
+      <td id="T_482a7_row3_col1" class="data row3 col1" >58.195%</td>
+      <td id="T_482a7_row3_col2" class="data row3 col2" >0.283752</td>
+      <td id="T_482a7_row3_col3" class="data row3 col3" >3.354419</td>
+      <td id="T_482a7_row3_col4" class="data row3 col4" >0.283752</td>
     </tr>
     <tr>
-      <th id="T_21d05_level0_row4" class="row_heading level0 row4" >UNL</th>
-      <td id="T_21d05_row4_col0" class="data row4 col0" >10.878%</td>
-      <td id="T_21d05_row4_col1" class="data row4 col1" >28.062%</td>
-      <td id="T_21d05_row4_col2" class="data row4 col2" >-0.867328</td>
-      <td id="T_21d05_row4_col3" class="data row4 col3" >-0.112951</td>
-      <td id="T_21d05_row4_col4" class="data row4 col4" >-0.867328</td>
+      <th id="T_482a7_level0_row4" class="row_heading level0 row4" >UNL</th>
+      <td id="T_482a7_row4_col0" class="data row4 col0" >10.878%</td>
+      <td id="T_482a7_row4_col1" class="data row4 col1" >28.062%</td>
+      <td id="T_482a7_row4_col2" class="data row4 col2" >-0.867328</td>
+      <td id="T_482a7_row4_col3" class="data row4 col3" >-0.112951</td>
+      <td id="T_482a7_row4_col4" class="data row4 col4" >-0.867328</td>
     </tr>
     <tr>
-      <th id="T_21d05_level0_row5" class="row_heading level0 row5" >Equally Weighted Portfolio</th>
-      <td id="T_21d05_row5_col0" class="data row5 col0" >39.735%</td>
-      <td id="T_21d05_row5_col1" class="data row5 col1" >29.132%</td>
-      <td id="T_21d05_row5_col2" class="data row5 col2" >0.223107</td>
-      <td id="T_21d05_row5_col3" class="data row5 col3" >1.732491</td>
-      <td id="T_21d05_row5_col4" class="data row5 col4" >0.223107</td>
+      <th id="T_482a7_level0_row5" class="row_heading level0 row5" >Equally Weighted Portfolio</th>
+      <td id="T_482a7_row5_col0" class="data row5 col0" >39.735%</td>
+      <td id="T_482a7_row5_col1" class="data row5 col1" >29.132%</td>
+      <td id="T_482a7_row5_col2" class="data row5 col2" >0.223107</td>
+      <td id="T_482a7_row5_col3" class="data row5 col3" >1.732491</td>
+      <td id="T_482a7_row5_col4" class="data row5 col4" >0.223107</td>
     </tr>
     <tr>
-      <th id="T_21d05_level0_row6" class="row_heading level0 row6" >Global Minimum Variance Portfolio</th>
-      <td id="T_21d05_row6_col0" class="data row6 col0" >17.193%</td>
-      <td id="T_21d05_row6_col1" class="data row6 col1" >19.939%</td>
-      <td id="T_21d05_row6_col2" class="data row6 col2" >0.261202</td>
-      <td id="T_21d05_row6_col3" class="data row6 col3" >0.616809</td>
-      <td id="T_21d05_row6_col4" class="data row6 col4" >0.261202</td>
+      <th id="T_482a7_level0_row6" class="row_heading level0 row6" >Global Minimum Variance Portfolio</th>
+      <td id="T_482a7_row6_col0" class="data row6 col0" >17.193%</td>
+      <td id="T_482a7_row6_col1" class="data row6 col1" >19.939%</td>
+      <td id="T_482a7_row6_col2" class="data row6 col2" >0.261202</td>
+      <td id="T_482a7_row6_col3" class="data row6 col3" >0.616809</td>
+      <td id="T_482a7_row6_col4" class="data row6 col4" >0.261202</td>
     </tr>
     <tr>
-      <th id="T_21d05_level0_row7" class="row_heading level0 row7" >Random Minimum Variance Portfolio</th>
-      <td id="T_21d05_row7_col0" class="data row7 col0" >21.064%</td>
-      <td id="T_21d05_row7_col1" class="data row7 col1" >20.265%</td>
-      <td id="T_21d05_row7_col2" class="data row7 col2" >0.293076</td>
-      <td id="T_21d05_row7_col3" class="data row7 col3" >0.681814</td>
-      <td id="T_21d05_row7_col4" class="data row7 col4" >0.293076</td>
+      <th id="T_482a7_level0_row7" class="row_heading level0 row7" >Random Minimum Variance Portfolio</th>
+      <td id="T_482a7_row7_col0" class="data row7 col0" >21.054%</td>
+      <td id="T_482a7_row7_col1" class="data row7 col1" >20.138%</td>
+      <td id="T_482a7_row7_col2" class="data row7 col2" >0.276842</td>
+      <td id="T_482a7_row7_col3" class="data row7 col3" >0.721441</td>
+      <td id="T_482a7_row7_col4" class="data row7 col4" >0.276842</td>
     </tr>
     <tr>
-      <th id="T_21d05_level0_row8" class="row_heading level0 row8" >Random Maximum Sharpe Ratio Portfolio</th>
-      <td id="T_21d05_row8_col0" class="data row8 col0" >57.531%</td>
-      <td id="T_21d05_row8_col1" class="data row8 col1" >32.822%</td>
-      <td id="T_21d05_row8_col2" class="data row8 col2" >0.305405</td>
-      <td id="T_21d05_row8_col3" class="data row8 col3" >1.848360</td>
-      <td id="T_21d05_row8_col4" class="data row8 col4" >0.305405</td>
+      <th id="T_482a7_level0_row8" class="row_heading level0 row8" >Random Maximum Sharpe Ratio Portfolio</th>
+      <td id="T_482a7_row8_col0" class="data row8 col0" >55.174%</td>
+      <td id="T_482a7_row8_col1" class="data row8 col1" >31.410%</td>
+      <td id="T_482a7_row8_col2" class="data row8 col2" >0.308775</td>
+      <td id="T_482a7_row8_col3" class="data row8 col3" >1.751846</td>
+      <td id="T_482a7_row8_col4" class="data row8 col4" >0.308775</td>
     </tr>
   </tbody>
 </table>
@@ -3880,7 +4877,7 @@ annual_mean_var["Geometric Mean"] = all_geo
 
  ### Rankings
 
- #### Sharpe Measure
+ #### Sharpe Measure: Rankings
 
 
 ```python
@@ -3900,7 +4897,7 @@ annual_mean_var.set_index("Index").sort_values(
 
 <style type="text/css">
 </style>
-<table id="T_ea1be_">
+<table id="T_687f4_">
   <thead>
     <tr>
       <th class="blank level0" >&nbsp;</th>
@@ -3923,85 +4920,85 @@ annual_mean_var.set_index("Index").sort_values(
   </thead>
   <tbody>
     <tr>
-      <th id="T_ea1be_level0_row0" class="row_heading level0 row0" >Random Maximum Sharpe Ratio Portfolio</th>
-      <td id="T_ea1be_row0_col0" class="data row0 col0" >57.531%</td>
-      <td id="T_ea1be_row0_col1" class="data row0 col1" >32.822%</td>
-      <td id="T_ea1be_row0_col2" class="data row0 col2" >0.305405</td>
-      <td id="T_ea1be_row0_col3" class="data row0 col3" >1.848360</td>
-      <td id="T_ea1be_row0_col4" class="data row0 col4" >0.305405</td>
-      <td id="T_ea1be_row0_col5" class="data row0 col5" >39.628%</td>
+      <th id="T_687f4_level0_row0" class="row_heading level0 row0" >Random Maximum Sharpe Ratio Portfolio</th>
+      <td id="T_687f4_row0_col0" class="data row0 col0" >55.174%</td>
+      <td id="T_687f4_row0_col1" class="data row0 col1" >31.410%</td>
+      <td id="T_687f4_row0_col2" class="data row0 col2" >0.308775</td>
+      <td id="T_687f4_row0_col3" class="data row0 col3" >1.751846</td>
+      <td id="T_687f4_row0_col4" class="data row0 col4" >0.308775</td>
+      <td id="T_687f4_row0_col5" class="data row0 col5" >38.059%</td>
     </tr>
     <tr>
-      <th id="T_ea1be_level0_row1" class="row_heading level0 row1" >Random Minimum Variance Portfolio</th>
-      <td id="T_ea1be_row1_col0" class="data row1 col0" >21.064%</td>
-      <td id="T_ea1be_row1_col1" class="data row1 col1" >20.265%</td>
-      <td id="T_ea1be_row1_col2" class="data row1 col2" >0.293076</td>
-      <td id="T_ea1be_row1_col3" class="data row1 col3" >0.681814</td>
-      <td id="T_ea1be_row1_col4" class="data row1 col4" >0.293076</td>
-      <td id="T_ea1be_row1_col5" class="data row1 col5" >14.638%</td>
+      <th id="T_687f4_level0_row1" class="row_heading level0 row1" >TAN</th>
+      <td id="T_687f4_row1_col0" class="data row1 col0" >41.105%</td>
+      <td id="T_687f4_row1_col1" class="data row1 col1" >38.750%</td>
+      <td id="T_687f4_row1_col2" class="data row1 col2" >0.286000</td>
+      <td id="T_687f4_row1_col3" class="data row1 col3" >1.399419</td>
+      <td id="T_687f4_row1_col4" class="data row1 col4" >0.286000</td>
+      <td id="T_687f4_row1_col5" class="data row1 col5" >31.267%</td>
     </tr>
     <tr>
-      <th id="T_ea1be_level0_row2" class="row_heading level0 row2" >TAN</th>
-      <td id="T_ea1be_row2_col0" class="data row2 col0" >41.105%</td>
-      <td id="T_ea1be_row2_col1" class="data row2 col1" >38.750%</td>
-      <td id="T_ea1be_row2_col2" class="data row2 col2" >0.286000</td>
-      <td id="T_ea1be_row2_col3" class="data row2 col3" >1.399419</td>
-      <td id="T_ea1be_row2_col4" class="data row2 col4" >0.286000</td>
-      <td id="T_ea1be_row2_col5" class="data row2 col5" >31.267%</td>
+      <th id="T_687f4_level0_row2" class="row_heading level0 row2" >TECL</th>
+      <td id="T_687f4_row2_col0" class="data row2 col0" >96.264%</td>
+      <td id="T_687f4_row2_col1" class="data row2 col1" >58.195%</td>
+      <td id="T_687f4_row2_col2" class="data row2 col2" >0.283752</td>
+      <td id="T_687f4_row2_col3" class="data row2 col3" >3.354419</td>
+      <td id="T_687f4_row2_col4" class="data row2 col4" >0.283752</td>
+      <td id="T_687f4_row2_col5" class="data row2 col5" >65.913%</td>
     </tr>
     <tr>
-      <th id="T_ea1be_level0_row3" class="row_heading level0 row3" >TECL</th>
-      <td id="T_ea1be_row3_col0" class="data row3 col0" >96.264%</td>
-      <td id="T_ea1be_row3_col1" class="data row3 col1" >58.195%</td>
-      <td id="T_ea1be_row3_col2" class="data row3 col2" >0.283752</td>
-      <td id="T_ea1be_row3_col3" class="data row3 col3" >3.354419</td>
-      <td id="T_ea1be_row3_col4" class="data row3 col4" >0.283752</td>
-      <td id="T_ea1be_row3_col5" class="data row3 col5" >65.913%</td>
+      <th id="T_687f4_level0_row3" class="row_heading level0 row3" >Random Minimum Variance Portfolio</th>
+      <td id="T_687f4_row3_col0" class="data row3 col0" >21.054%</td>
+      <td id="T_687f4_row3_col1" class="data row3 col1" >20.138%</td>
+      <td id="T_687f4_row3_col2" class="data row3 col2" >0.276842</td>
+      <td id="T_687f4_row3_col3" class="data row3 col3" >0.721441</td>
+      <td id="T_687f4_row3_col4" class="data row3 col4" >0.276842</td>
+      <td id="T_687f4_row3_col5" class="data row3 col5" >14.496%</td>
     </tr>
     <tr>
-      <th id="T_ea1be_level0_row4" class="row_heading level0 row4" >Global Minimum Variance Portfolio</th>
-      <td id="T_ea1be_row4_col0" class="data row4 col0" >17.193%</td>
-      <td id="T_ea1be_row4_col1" class="data row4 col1" >19.939%</td>
-      <td id="T_ea1be_row4_col2" class="data row4 col2" >0.261202</td>
-      <td id="T_ea1be_row4_col3" class="data row4 col3" >0.616809</td>
-      <td id="T_ea1be_row4_col4" class="data row4 col4" >0.261202</td>
-      <td id="T_ea1be_row4_col5" class="data row4 col5" >11.665%</td>
+      <th id="T_687f4_level0_row4" class="row_heading level0 row4" >Global Minimum Variance Portfolio</th>
+      <td id="T_687f4_row4_col0" class="data row4 col0" >17.193%</td>
+      <td id="T_687f4_row4_col1" class="data row4 col1" >19.939%</td>
+      <td id="T_687f4_row4_col2" class="data row4 col2" >0.261202</td>
+      <td id="T_687f4_row4_col3" class="data row4 col3" >0.616809</td>
+      <td id="T_687f4_row4_col4" class="data row4 col4" >0.261202</td>
+      <td id="T_687f4_row4_col5" class="data row4 col5" >11.665%</td>
     </tr>
     <tr>
-      <th id="T_ea1be_level0_row5" class="row_heading level0 row5" >Equally Weighted Portfolio</th>
-      <td id="T_ea1be_row5_col0" class="data row5 col0" >39.735%</td>
-      <td id="T_ea1be_row5_col1" class="data row5 col1" >29.132%</td>
-      <td id="T_ea1be_row5_col2" class="data row5 col2" >0.223107</td>
-      <td id="T_ea1be_row5_col3" class="data row5 col3" >1.732491</td>
-      <td id="T_ea1be_row5_col4" class="data row5 col4" >0.223107</td>
-      <td id="T_ea1be_row5_col5" class="data row5 col5" >29.382%</td>
+      <th id="T_687f4_level0_row5" class="row_heading level0 row5" >Equally Weighted Portfolio</th>
+      <td id="T_687f4_row5_col0" class="data row5 col0" >39.735%</td>
+      <td id="T_687f4_row5_col1" class="data row5 col1" >29.132%</td>
+      <td id="T_687f4_row5_col2" class="data row5 col2" >0.223107</td>
+      <td id="T_687f4_row5_col3" class="data row5 col3" >1.732491</td>
+      <td id="T_687f4_row5_col4" class="data row5 col4" >0.223107</td>
+      <td id="T_687f4_row5_col5" class="data row5 col5" >29.382%</td>
     </tr>
     <tr>
-      <th id="T_ea1be_level0_row6" class="row_heading level0 row6" >CURE</th>
-      <td id="T_ea1be_row6_col0" class="data row6 col0" >46.883%</td>
-      <td id="T_ea1be_row6_col1" class="data row6 col1" >46.464%</td>
-      <td id="T_ea1be_row6_col2" class="data row6 col2" >0.182804</td>
-      <td id="T_ea1be_row6_col3" class="data row6 col3" >2.505496</td>
-      <td id="T_ea1be_row6_col4" class="data row6 col4" >0.182804</td>
-      <td id="T_ea1be_row6_col5" class="data row6 col5" >32.334%</td>
+      <th id="T_687f4_level0_row6" class="row_heading level0 row6" >CURE</th>
+      <td id="T_687f4_row6_col0" class="data row6 col0" >46.883%</td>
+      <td id="T_687f4_row6_col1" class="data row6 col1" >46.464%</td>
+      <td id="T_687f4_row6_col2" class="data row6 col2" >0.182804</td>
+      <td id="T_687f4_row6_col3" class="data row6 col3" >2.505496</td>
+      <td id="T_687f4_row6_col4" class="data row6 col4" >0.182804</td>
+      <td id="T_687f4_row6_col5" class="data row6 col5" >32.334%</td>
     </tr>
     <tr>
-      <th id="T_ea1be_level0_row7" class="row_heading level0 row7" >COPX</th>
-      <td id="T_ea1be_row7_col0" class="data row7 col0" >17.123%</td>
-      <td id="T_ea1be_row7_col1" class="data row7 col1" >34.553%</td>
-      <td id="T_ea1be_row7_col2" class="data row7 col2" >0.105810</td>
-      <td id="T_ea1be_row7_col3" class="data row7 col3" >1.516074</td>
-      <td id="T_ea1be_row7_col4" class="data row7 col4" >0.105810</td>
-      <td id="T_ea1be_row7_col5" class="data row7 col5" >10.521%</td>
+      <th id="T_687f4_level0_row7" class="row_heading level0 row7" >COPX</th>
+      <td id="T_687f4_row7_col0" class="data row7 col0" >17.123%</td>
+      <td id="T_687f4_row7_col1" class="data row7 col1" >34.553%</td>
+      <td id="T_687f4_row7_col2" class="data row7 col2" >0.105810</td>
+      <td id="T_687f4_row7_col3" class="data row7 col3" >1.516074</td>
+      <td id="T_687f4_row7_col4" class="data row7 col4" >0.105810</td>
+      <td id="T_687f4_row7_col5" class="data row7 col5" >10.521%</td>
     </tr>
     <tr>
-      <th id="T_ea1be_level0_row8" class="row_heading level0 row8" >UNL</th>
-      <td id="T_ea1be_row8_col0" class="data row8 col0" >10.878%</td>
-      <td id="T_ea1be_row8_col1" class="data row8 col1" >28.062%</td>
-      <td id="T_ea1be_row8_col2" class="data row8 col2" >-0.867328</td>
-      <td id="T_ea1be_row8_col3" class="data row8 col3" >-0.112951</td>
-      <td id="T_ea1be_row8_col4" class="data row8 col4" >-0.867328</td>
-      <td id="T_ea1be_row8_col5" class="data row8 col5" >6.876%</td>
+      <th id="T_687f4_level0_row8" class="row_heading level0 row8" >UNL</th>
+      <td id="T_687f4_row8_col0" class="data row8 col0" >10.878%</td>
+      <td id="T_687f4_row8_col1" class="data row8 col1" >28.062%</td>
+      <td id="T_687f4_row8_col2" class="data row8 col2" >-0.867328</td>
+      <td id="T_687f4_row8_col3" class="data row8 col3" >-0.112951</td>
+      <td id="T_687f4_row8_col4" class="data row8 col4" >-0.867328</td>
+      <td id="T_687f4_row8_col5" class="data row8 col5" >6.876%</td>
     </tr>
   </tbody>
 </table>
@@ -4026,11 +5023,11 @@ annual_mean_var.set_index("Index")["Sharpe Ratio"].plot(
 
 
     
-![png](output_158_1.png)
+![png](output_168_1.png)
     
 
 
- #### Treynor Measure
+ #### Treynor Measure: Rankings
 
 
 ```python
@@ -4050,7 +5047,7 @@ annual_mean_var.set_index("Index").sort_values(
 
 <style type="text/css">
 </style>
-<table id="T_048a1_">
+<table id="T_d6c68_">
   <thead>
     <tr>
       <th class="blank level0" >&nbsp;</th>
@@ -4073,85 +5070,85 @@ annual_mean_var.set_index("Index").sort_values(
   </thead>
   <tbody>
     <tr>
-      <th id="T_048a1_level0_row0" class="row_heading level0 row0" >Random Maximum Sharpe Ratio Portfolio</th>
-      <td id="T_048a1_row0_col0" class="data row0 col0" >57.531%</td>
-      <td id="T_048a1_row0_col1" class="data row0 col1" >32.822%</td>
-      <td id="T_048a1_row0_col2" class="data row0 col2" >0.305405</td>
-      <td id="T_048a1_row0_col3" class="data row0 col3" >1.848360</td>
-      <td id="T_048a1_row0_col4" class="data row0 col4" >0.305405</td>
-      <td id="T_048a1_row0_col5" class="data row0 col5" >39.628%</td>
+      <th id="T_d6c68_level0_row0" class="row_heading level0 row0" >Random Maximum Sharpe Ratio Portfolio</th>
+      <td id="T_d6c68_row0_col0" class="data row0 col0" >55.174%</td>
+      <td id="T_d6c68_row0_col1" class="data row0 col1" >31.410%</td>
+      <td id="T_d6c68_row0_col2" class="data row0 col2" >0.308775</td>
+      <td id="T_d6c68_row0_col3" class="data row0 col3" >1.751846</td>
+      <td id="T_d6c68_row0_col4" class="data row0 col4" >0.308775</td>
+      <td id="T_d6c68_row0_col5" class="data row0 col5" >38.059%</td>
     </tr>
     <tr>
-      <th id="T_048a1_level0_row1" class="row_heading level0 row1" >Random Minimum Variance Portfolio</th>
-      <td id="T_048a1_row1_col0" class="data row1 col0" >21.064%</td>
-      <td id="T_048a1_row1_col1" class="data row1 col1" >20.265%</td>
-      <td id="T_048a1_row1_col2" class="data row1 col2" >0.293076</td>
-      <td id="T_048a1_row1_col3" class="data row1 col3" >0.681814</td>
-      <td id="T_048a1_row1_col4" class="data row1 col4" >0.293076</td>
-      <td id="T_048a1_row1_col5" class="data row1 col5" >14.638%</td>
+      <th id="T_d6c68_level0_row1" class="row_heading level0 row1" >TAN</th>
+      <td id="T_d6c68_row1_col0" class="data row1 col0" >41.105%</td>
+      <td id="T_d6c68_row1_col1" class="data row1 col1" >38.750%</td>
+      <td id="T_d6c68_row1_col2" class="data row1 col2" >0.286000</td>
+      <td id="T_d6c68_row1_col3" class="data row1 col3" >1.399419</td>
+      <td id="T_d6c68_row1_col4" class="data row1 col4" >0.286000</td>
+      <td id="T_d6c68_row1_col5" class="data row1 col5" >31.267%</td>
     </tr>
     <tr>
-      <th id="T_048a1_level0_row2" class="row_heading level0 row2" >TAN</th>
-      <td id="T_048a1_row2_col0" class="data row2 col0" >41.105%</td>
-      <td id="T_048a1_row2_col1" class="data row2 col1" >38.750%</td>
-      <td id="T_048a1_row2_col2" class="data row2 col2" >0.286000</td>
-      <td id="T_048a1_row2_col3" class="data row2 col3" >1.399419</td>
-      <td id="T_048a1_row2_col4" class="data row2 col4" >0.286000</td>
-      <td id="T_048a1_row2_col5" class="data row2 col5" >31.267%</td>
+      <th id="T_d6c68_level0_row2" class="row_heading level0 row2" >TECL</th>
+      <td id="T_d6c68_row2_col0" class="data row2 col0" >96.264%</td>
+      <td id="T_d6c68_row2_col1" class="data row2 col1" >58.195%</td>
+      <td id="T_d6c68_row2_col2" class="data row2 col2" >0.283752</td>
+      <td id="T_d6c68_row2_col3" class="data row2 col3" >3.354419</td>
+      <td id="T_d6c68_row2_col4" class="data row2 col4" >0.283752</td>
+      <td id="T_d6c68_row2_col5" class="data row2 col5" >65.913%</td>
     </tr>
     <tr>
-      <th id="T_048a1_level0_row3" class="row_heading level0 row3" >TECL</th>
-      <td id="T_048a1_row3_col0" class="data row3 col0" >96.264%</td>
-      <td id="T_048a1_row3_col1" class="data row3 col1" >58.195%</td>
-      <td id="T_048a1_row3_col2" class="data row3 col2" >0.283752</td>
-      <td id="T_048a1_row3_col3" class="data row3 col3" >3.354419</td>
-      <td id="T_048a1_row3_col4" class="data row3 col4" >0.283752</td>
-      <td id="T_048a1_row3_col5" class="data row3 col5" >65.913%</td>
+      <th id="T_d6c68_level0_row3" class="row_heading level0 row3" >Random Minimum Variance Portfolio</th>
+      <td id="T_d6c68_row3_col0" class="data row3 col0" >21.054%</td>
+      <td id="T_d6c68_row3_col1" class="data row3 col1" >20.138%</td>
+      <td id="T_d6c68_row3_col2" class="data row3 col2" >0.276842</td>
+      <td id="T_d6c68_row3_col3" class="data row3 col3" >0.721441</td>
+      <td id="T_d6c68_row3_col4" class="data row3 col4" >0.276842</td>
+      <td id="T_d6c68_row3_col5" class="data row3 col5" >14.496%</td>
     </tr>
     <tr>
-      <th id="T_048a1_level0_row4" class="row_heading level0 row4" >Global Minimum Variance Portfolio</th>
-      <td id="T_048a1_row4_col0" class="data row4 col0" >17.193%</td>
-      <td id="T_048a1_row4_col1" class="data row4 col1" >19.939%</td>
-      <td id="T_048a1_row4_col2" class="data row4 col2" >0.261202</td>
-      <td id="T_048a1_row4_col3" class="data row4 col3" >0.616809</td>
-      <td id="T_048a1_row4_col4" class="data row4 col4" >0.261202</td>
-      <td id="T_048a1_row4_col5" class="data row4 col5" >11.665%</td>
+      <th id="T_d6c68_level0_row4" class="row_heading level0 row4" >Global Minimum Variance Portfolio</th>
+      <td id="T_d6c68_row4_col0" class="data row4 col0" >17.193%</td>
+      <td id="T_d6c68_row4_col1" class="data row4 col1" >19.939%</td>
+      <td id="T_d6c68_row4_col2" class="data row4 col2" >0.261202</td>
+      <td id="T_d6c68_row4_col3" class="data row4 col3" >0.616809</td>
+      <td id="T_d6c68_row4_col4" class="data row4 col4" >0.261202</td>
+      <td id="T_d6c68_row4_col5" class="data row4 col5" >11.665%</td>
     </tr>
     <tr>
-      <th id="T_048a1_level0_row5" class="row_heading level0 row5" >Equally Weighted Portfolio</th>
-      <td id="T_048a1_row5_col0" class="data row5 col0" >39.735%</td>
-      <td id="T_048a1_row5_col1" class="data row5 col1" >29.132%</td>
-      <td id="T_048a1_row5_col2" class="data row5 col2" >0.223107</td>
-      <td id="T_048a1_row5_col3" class="data row5 col3" >1.732491</td>
-      <td id="T_048a1_row5_col4" class="data row5 col4" >0.223107</td>
-      <td id="T_048a1_row5_col5" class="data row5 col5" >29.382%</td>
+      <th id="T_d6c68_level0_row5" class="row_heading level0 row5" >Equally Weighted Portfolio</th>
+      <td id="T_d6c68_row5_col0" class="data row5 col0" >39.735%</td>
+      <td id="T_d6c68_row5_col1" class="data row5 col1" >29.132%</td>
+      <td id="T_d6c68_row5_col2" class="data row5 col2" >0.223107</td>
+      <td id="T_d6c68_row5_col3" class="data row5 col3" >1.732491</td>
+      <td id="T_d6c68_row5_col4" class="data row5 col4" >0.223107</td>
+      <td id="T_d6c68_row5_col5" class="data row5 col5" >29.382%</td>
     </tr>
     <tr>
-      <th id="T_048a1_level0_row6" class="row_heading level0 row6" >CURE</th>
-      <td id="T_048a1_row6_col0" class="data row6 col0" >46.883%</td>
-      <td id="T_048a1_row6_col1" class="data row6 col1" >46.464%</td>
-      <td id="T_048a1_row6_col2" class="data row6 col2" >0.182804</td>
-      <td id="T_048a1_row6_col3" class="data row6 col3" >2.505496</td>
-      <td id="T_048a1_row6_col4" class="data row6 col4" >0.182804</td>
-      <td id="T_048a1_row6_col5" class="data row6 col5" >32.334%</td>
+      <th id="T_d6c68_level0_row6" class="row_heading level0 row6" >CURE</th>
+      <td id="T_d6c68_row6_col0" class="data row6 col0" >46.883%</td>
+      <td id="T_d6c68_row6_col1" class="data row6 col1" >46.464%</td>
+      <td id="T_d6c68_row6_col2" class="data row6 col2" >0.182804</td>
+      <td id="T_d6c68_row6_col3" class="data row6 col3" >2.505496</td>
+      <td id="T_d6c68_row6_col4" class="data row6 col4" >0.182804</td>
+      <td id="T_d6c68_row6_col5" class="data row6 col5" >32.334%</td>
     </tr>
     <tr>
-      <th id="T_048a1_level0_row7" class="row_heading level0 row7" >COPX</th>
-      <td id="T_048a1_row7_col0" class="data row7 col0" >17.123%</td>
-      <td id="T_048a1_row7_col1" class="data row7 col1" >34.553%</td>
-      <td id="T_048a1_row7_col2" class="data row7 col2" >0.105810</td>
-      <td id="T_048a1_row7_col3" class="data row7 col3" >1.516074</td>
-      <td id="T_048a1_row7_col4" class="data row7 col4" >0.105810</td>
-      <td id="T_048a1_row7_col5" class="data row7 col5" >10.521%</td>
+      <th id="T_d6c68_level0_row7" class="row_heading level0 row7" >COPX</th>
+      <td id="T_d6c68_row7_col0" class="data row7 col0" >17.123%</td>
+      <td id="T_d6c68_row7_col1" class="data row7 col1" >34.553%</td>
+      <td id="T_d6c68_row7_col2" class="data row7 col2" >0.105810</td>
+      <td id="T_d6c68_row7_col3" class="data row7 col3" >1.516074</td>
+      <td id="T_d6c68_row7_col4" class="data row7 col4" >0.105810</td>
+      <td id="T_d6c68_row7_col5" class="data row7 col5" >10.521%</td>
     </tr>
     <tr>
-      <th id="T_048a1_level0_row8" class="row_heading level0 row8" >UNL</th>
-      <td id="T_048a1_row8_col0" class="data row8 col0" >10.878%</td>
-      <td id="T_048a1_row8_col1" class="data row8 col1" >28.062%</td>
-      <td id="T_048a1_row8_col2" class="data row8 col2" >-0.867328</td>
-      <td id="T_048a1_row8_col3" class="data row8 col3" >-0.112951</td>
-      <td id="T_048a1_row8_col4" class="data row8 col4" >-0.867328</td>
-      <td id="T_048a1_row8_col5" class="data row8 col5" >6.876%</td>
+      <th id="T_d6c68_level0_row8" class="row_heading level0 row8" >UNL</th>
+      <td id="T_d6c68_row8_col0" class="data row8 col0" >10.878%</td>
+      <td id="T_d6c68_row8_col1" class="data row8 col1" >28.062%</td>
+      <td id="T_d6c68_row8_col2" class="data row8 col2" >-0.867328</td>
+      <td id="T_d6c68_row8_col3" class="data row8 col3" >-0.112951</td>
+      <td id="T_d6c68_row8_col4" class="data row8 col4" >-0.867328</td>
+      <td id="T_d6c68_row8_col5" class="data row8 col5" >6.876%</td>
     </tr>
   </tbody>
 </table>
@@ -4176,11 +5173,11 @@ annual_mean_var.set_index("Index")["Treynor Ratio"].plot(
 
 
     
-![png](output_161_1.png)
+![png](output_171_1.png)
     
 
 
- #### Geometric Mean
+ #### Geometric Mean: Rankings
 
 
 ```python
@@ -4200,7 +5197,7 @@ annual_mean_var.set_index("Index").sort_values(
 
 <style type="text/css">
 </style>
-<table id="T_aee3b_">
+<table id="T_c7370_">
   <thead>
     <tr>
       <th class="blank level0" >&nbsp;</th>
@@ -4223,85 +5220,85 @@ annual_mean_var.set_index("Index").sort_values(
   </thead>
   <tbody>
     <tr>
-      <th id="T_aee3b_level0_row0" class="row_heading level0 row0" >TECL</th>
-      <td id="T_aee3b_row0_col0" class="data row0 col0" >96.264%</td>
-      <td id="T_aee3b_row0_col1" class="data row0 col1" >58.195%</td>
-      <td id="T_aee3b_row0_col2" class="data row0 col2" >0.283752</td>
-      <td id="T_aee3b_row0_col3" class="data row0 col3" >3.354419</td>
-      <td id="T_aee3b_row0_col4" class="data row0 col4" >0.283752</td>
-      <td id="T_aee3b_row0_col5" class="data row0 col5" >65.913%</td>
+      <th id="T_c7370_level0_row0" class="row_heading level0 row0" >TECL</th>
+      <td id="T_c7370_row0_col0" class="data row0 col0" >96.264%</td>
+      <td id="T_c7370_row0_col1" class="data row0 col1" >58.195%</td>
+      <td id="T_c7370_row0_col2" class="data row0 col2" >0.283752</td>
+      <td id="T_c7370_row0_col3" class="data row0 col3" >3.354419</td>
+      <td id="T_c7370_row0_col4" class="data row0 col4" >0.283752</td>
+      <td id="T_c7370_row0_col5" class="data row0 col5" >65.913%</td>
     </tr>
     <tr>
-      <th id="T_aee3b_level0_row1" class="row_heading level0 row1" >Random Maximum Sharpe Ratio Portfolio</th>
-      <td id="T_aee3b_row1_col0" class="data row1 col0" >57.531%</td>
-      <td id="T_aee3b_row1_col1" class="data row1 col1" >32.822%</td>
-      <td id="T_aee3b_row1_col2" class="data row1 col2" >0.305405</td>
-      <td id="T_aee3b_row1_col3" class="data row1 col3" >1.848360</td>
-      <td id="T_aee3b_row1_col4" class="data row1 col4" >0.305405</td>
-      <td id="T_aee3b_row1_col5" class="data row1 col5" >39.628%</td>
+      <th id="T_c7370_level0_row1" class="row_heading level0 row1" >Random Maximum Sharpe Ratio Portfolio</th>
+      <td id="T_c7370_row1_col0" class="data row1 col0" >55.174%</td>
+      <td id="T_c7370_row1_col1" class="data row1 col1" >31.410%</td>
+      <td id="T_c7370_row1_col2" class="data row1 col2" >0.308775</td>
+      <td id="T_c7370_row1_col3" class="data row1 col3" >1.751846</td>
+      <td id="T_c7370_row1_col4" class="data row1 col4" >0.308775</td>
+      <td id="T_c7370_row1_col5" class="data row1 col5" >38.059%</td>
     </tr>
     <tr>
-      <th id="T_aee3b_level0_row2" class="row_heading level0 row2" >CURE</th>
-      <td id="T_aee3b_row2_col0" class="data row2 col0" >46.883%</td>
-      <td id="T_aee3b_row2_col1" class="data row2 col1" >46.464%</td>
-      <td id="T_aee3b_row2_col2" class="data row2 col2" >0.182804</td>
-      <td id="T_aee3b_row2_col3" class="data row2 col3" >2.505496</td>
-      <td id="T_aee3b_row2_col4" class="data row2 col4" >0.182804</td>
-      <td id="T_aee3b_row2_col5" class="data row2 col5" >32.334%</td>
+      <th id="T_c7370_level0_row2" class="row_heading level0 row2" >CURE</th>
+      <td id="T_c7370_row2_col0" class="data row2 col0" >46.883%</td>
+      <td id="T_c7370_row2_col1" class="data row2 col1" >46.464%</td>
+      <td id="T_c7370_row2_col2" class="data row2 col2" >0.182804</td>
+      <td id="T_c7370_row2_col3" class="data row2 col3" >2.505496</td>
+      <td id="T_c7370_row2_col4" class="data row2 col4" >0.182804</td>
+      <td id="T_c7370_row2_col5" class="data row2 col5" >32.334%</td>
     </tr>
     <tr>
-      <th id="T_aee3b_level0_row3" class="row_heading level0 row3" >TAN</th>
-      <td id="T_aee3b_row3_col0" class="data row3 col0" >41.105%</td>
-      <td id="T_aee3b_row3_col1" class="data row3 col1" >38.750%</td>
-      <td id="T_aee3b_row3_col2" class="data row3 col2" >0.286000</td>
-      <td id="T_aee3b_row3_col3" class="data row3 col3" >1.399419</td>
-      <td id="T_aee3b_row3_col4" class="data row3 col4" >0.286000</td>
-      <td id="T_aee3b_row3_col5" class="data row3 col5" >31.267%</td>
+      <th id="T_c7370_level0_row3" class="row_heading level0 row3" >TAN</th>
+      <td id="T_c7370_row3_col0" class="data row3 col0" >41.105%</td>
+      <td id="T_c7370_row3_col1" class="data row3 col1" >38.750%</td>
+      <td id="T_c7370_row3_col2" class="data row3 col2" >0.286000</td>
+      <td id="T_c7370_row3_col3" class="data row3 col3" >1.399419</td>
+      <td id="T_c7370_row3_col4" class="data row3 col4" >0.286000</td>
+      <td id="T_c7370_row3_col5" class="data row3 col5" >31.267%</td>
     </tr>
     <tr>
-      <th id="T_aee3b_level0_row4" class="row_heading level0 row4" >Equally Weighted Portfolio</th>
-      <td id="T_aee3b_row4_col0" class="data row4 col0" >39.735%</td>
-      <td id="T_aee3b_row4_col1" class="data row4 col1" >29.132%</td>
-      <td id="T_aee3b_row4_col2" class="data row4 col2" >0.223107</td>
-      <td id="T_aee3b_row4_col3" class="data row4 col3" >1.732491</td>
-      <td id="T_aee3b_row4_col4" class="data row4 col4" >0.223107</td>
-      <td id="T_aee3b_row4_col5" class="data row4 col5" >29.382%</td>
+      <th id="T_c7370_level0_row4" class="row_heading level0 row4" >Equally Weighted Portfolio</th>
+      <td id="T_c7370_row4_col0" class="data row4 col0" >39.735%</td>
+      <td id="T_c7370_row4_col1" class="data row4 col1" >29.132%</td>
+      <td id="T_c7370_row4_col2" class="data row4 col2" >0.223107</td>
+      <td id="T_c7370_row4_col3" class="data row4 col3" >1.732491</td>
+      <td id="T_c7370_row4_col4" class="data row4 col4" >0.223107</td>
+      <td id="T_c7370_row4_col5" class="data row4 col5" >29.382%</td>
     </tr>
     <tr>
-      <th id="T_aee3b_level0_row5" class="row_heading level0 row5" >Random Minimum Variance Portfolio</th>
-      <td id="T_aee3b_row5_col0" class="data row5 col0" >21.064%</td>
-      <td id="T_aee3b_row5_col1" class="data row5 col1" >20.265%</td>
-      <td id="T_aee3b_row5_col2" class="data row5 col2" >0.293076</td>
-      <td id="T_aee3b_row5_col3" class="data row5 col3" >0.681814</td>
-      <td id="T_aee3b_row5_col4" class="data row5 col4" >0.293076</td>
-      <td id="T_aee3b_row5_col5" class="data row5 col5" >14.638%</td>
+      <th id="T_c7370_level0_row5" class="row_heading level0 row5" >Random Minimum Variance Portfolio</th>
+      <td id="T_c7370_row5_col0" class="data row5 col0" >21.054%</td>
+      <td id="T_c7370_row5_col1" class="data row5 col1" >20.138%</td>
+      <td id="T_c7370_row5_col2" class="data row5 col2" >0.276842</td>
+      <td id="T_c7370_row5_col3" class="data row5 col3" >0.721441</td>
+      <td id="T_c7370_row5_col4" class="data row5 col4" >0.276842</td>
+      <td id="T_c7370_row5_col5" class="data row5 col5" >14.496%</td>
     </tr>
     <tr>
-      <th id="T_aee3b_level0_row6" class="row_heading level0 row6" >Global Minimum Variance Portfolio</th>
-      <td id="T_aee3b_row6_col0" class="data row6 col0" >17.193%</td>
-      <td id="T_aee3b_row6_col1" class="data row6 col1" >19.939%</td>
-      <td id="T_aee3b_row6_col2" class="data row6 col2" >0.261202</td>
-      <td id="T_aee3b_row6_col3" class="data row6 col3" >0.616809</td>
-      <td id="T_aee3b_row6_col4" class="data row6 col4" >0.261202</td>
-      <td id="T_aee3b_row6_col5" class="data row6 col5" >11.665%</td>
+      <th id="T_c7370_level0_row6" class="row_heading level0 row6" >Global Minimum Variance Portfolio</th>
+      <td id="T_c7370_row6_col0" class="data row6 col0" >17.193%</td>
+      <td id="T_c7370_row6_col1" class="data row6 col1" >19.939%</td>
+      <td id="T_c7370_row6_col2" class="data row6 col2" >0.261202</td>
+      <td id="T_c7370_row6_col3" class="data row6 col3" >0.616809</td>
+      <td id="T_c7370_row6_col4" class="data row6 col4" >0.261202</td>
+      <td id="T_c7370_row6_col5" class="data row6 col5" >11.665%</td>
     </tr>
     <tr>
-      <th id="T_aee3b_level0_row7" class="row_heading level0 row7" >COPX</th>
-      <td id="T_aee3b_row7_col0" class="data row7 col0" >17.123%</td>
-      <td id="T_aee3b_row7_col1" class="data row7 col1" >34.553%</td>
-      <td id="T_aee3b_row7_col2" class="data row7 col2" >0.105810</td>
-      <td id="T_aee3b_row7_col3" class="data row7 col3" >1.516074</td>
-      <td id="T_aee3b_row7_col4" class="data row7 col4" >0.105810</td>
-      <td id="T_aee3b_row7_col5" class="data row7 col5" >10.521%</td>
+      <th id="T_c7370_level0_row7" class="row_heading level0 row7" >COPX</th>
+      <td id="T_c7370_row7_col0" class="data row7 col0" >17.123%</td>
+      <td id="T_c7370_row7_col1" class="data row7 col1" >34.553%</td>
+      <td id="T_c7370_row7_col2" class="data row7 col2" >0.105810</td>
+      <td id="T_c7370_row7_col3" class="data row7 col3" >1.516074</td>
+      <td id="T_c7370_row7_col4" class="data row7 col4" >0.105810</td>
+      <td id="T_c7370_row7_col5" class="data row7 col5" >10.521%</td>
     </tr>
     <tr>
-      <th id="T_aee3b_level0_row8" class="row_heading level0 row8" >UNL</th>
-      <td id="T_aee3b_row8_col0" class="data row8 col0" >10.878%</td>
-      <td id="T_aee3b_row8_col1" class="data row8 col1" >28.062%</td>
-      <td id="T_aee3b_row8_col2" class="data row8 col2" >-0.867328</td>
-      <td id="T_aee3b_row8_col3" class="data row8 col3" >-0.112951</td>
-      <td id="T_aee3b_row8_col4" class="data row8 col4" >-0.867328</td>
-      <td id="T_aee3b_row8_col5" class="data row8 col5" >6.876%</td>
+      <th id="T_c7370_level0_row8" class="row_heading level0 row8" >UNL</th>
+      <td id="T_c7370_row8_col0" class="data row8 col0" >10.878%</td>
+      <td id="T_c7370_row8_col1" class="data row8 col1" >28.062%</td>
+      <td id="T_c7370_row8_col2" class="data row8 col2" >-0.867328</td>
+      <td id="T_c7370_row8_col3" class="data row8 col3" >-0.112951</td>
+      <td id="T_c7370_row8_col4" class="data row8 col4" >-0.867328</td>
+      <td id="T_c7370_row8_col5" class="data row8 col5" >6.876%</td>
     </tr>
   </tbody>
 </table>
@@ -4326,6 +5323,6 @@ annual_mean_var.set_index("Index")["Geometric Mean"].plot(
 
 
     
-![png](output_164_1.png)
+![png](output_174_1.png)
     
 
