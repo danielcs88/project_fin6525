@@ -49,7 +49,7 @@ from scipy.stats import gmean
 
 # Plotting parameters to make plots bigger
 plt.rcParams["figure.dpi"] = 125
-get_ipython().run_line_magic("config", "InlineBackend.figure_format = 'retina'")
+# get_ipython().run_line_magic("config", "InlineBackend.figure_format = 'retina'")
 
 # %%
 display(
@@ -113,6 +113,7 @@ plt.style.use("seaborn-white")
 
 # %%
 start = datetime(2017, 1, 1)
+# start = datetime(2020, 1, 1)
 end = datetime(2022, 1, 1)
 
 # %% [markdown] tags=[]
@@ -120,6 +121,10 @@ end = datetime(2022, 1, 1)
 
 # %%
 funds = sorted(["COPX", "UNL", "CURE", "TAN", "TECL"])
+# funds = input("Enter tickers of funds separated by spaces")
+# funds = funds.split()
+# funds = [f.upper() for f in funds]
+n_size = len(funds)
 
 # %%
 tickers = yf.Tickers(funds)
@@ -175,6 +180,9 @@ returns_m, returns_n = returns.shape
 # #### Table 1: Summary Statistics
 
 # %%
+# INVESTMENT = int(input("Enter investment amount: "))
+INVESTMENT = 10000
+
 table_1 = pd.DataFrame(
     {
         "Arithmetic Mean": returns.mean(),
@@ -186,7 +194,7 @@ table_1 = pd.DataFrame(
             rate=(gmean(returns + 1) - 1),
             pmt=0,
             nper=returns_m,
-            pv=[-10000] * returns_n,
+            pv=[-INVESTMENT] * returns_n,
         ),
     }
 )
@@ -228,7 +236,7 @@ returns.cov(ddof=0)
 returns.corr()
 
 # %%
-# sns.set(rc={"figure.figsize": (8, 8)})
+sns.set(rc={"figure.figsize": (n_size * 1.6, n_size * 1.6)})
 sns.heatmap(
     returns.corr(),
     annot=True,
@@ -238,6 +246,9 @@ sns.heatmap(
     vmax=1,
 ).set_title("Correlation Matrix")
 plt.show()
+
+# %%
+sns.set(rc={"figure.figsize": (8, 8)})
 
 # %% [markdown]
 # ### D. Prospectus Strategy
@@ -276,8 +287,19 @@ plt.show()
 
 # %%
 # Note that Python uses zero-indices
-T13W = pdr.DataReader("GS3M", "fred", "02/2017", end)
-Rm = yf.download(["^GSPC", "^DJI"], start=start, end=end, interval="1mo")["Adj Close"]
+# T13W = pdr.DataReader("GS3M", "fred", "02/2017", end)
+dates = sorted(returns.index)[0]
+start_year = dates.year
+start_month = dates.month
+start_day = dates.day
+T13W = pdr.DataReader("GS3M", "fred", f"{start_month}/{start_year}", end)
+Rm = yf.download(
+    ["^GSPC", "^DJI"],
+    start=datetime(start_year, start_month - 1, start_day),
+    end=end,
+    interval="1mo",
+)["Adj Close"]
+# Rm = yf.download(["^GSPC", "^DJI"], start=start, end=end, interval="1mo")["Adj Close"]
 Rm = Rm.pct_change().dropna()
 
 # %% [markdown]
@@ -329,8 +351,8 @@ for result in sp500_ols:
 
 # %%
 # Extract the beta coefficients
-sp500_beta = [sp500_ols[fund].params[0] for fund in range(5)]
-djia_beta = [djia_ols[fund].params[0] for fund in range(5)]
+sp500_beta = [sp500_ols[fund].params[0] for fund in range(n_size)]
+djia_beta = [djia_ols[fund].params[0] for fund in range(n_size)]
 
 # %%
 betas = pd.DataFrame([sp500_beta, djia_beta], columns=funds, index=["^GSPC", "^DJI"])
@@ -418,7 +440,7 @@ returns_tidy = returns_tidy.rename(columns={"variable": "Fund", "value": "Return
 # %%
 # This complicated code is to make running possible on Google Colab
 try:
-    tidy_data = pd.concat([pd.concat([table_4] * 5), returns_tidy], axis=1)
+    tidy_data = pd.concat([pd.concat([table_4] * n_size), returns_tidy], axis=1)
     tidy_data.to_pickle("data/tidy_huh.pkl")
 except:
     get_ipython().system(
@@ -443,8 +465,8 @@ plt.show()
 # returns by the S&P 500 or the Dow Jones Industrial Average were little.
 #
 # The only fund that didn’t perform identically was
-# [**UNL**](https://finance.yahoo.com/quote/UNL?p=UNL](https://www.google.com/url?q=https://finance.yahoo.com/quote/UNL?p%3DUNL&sa=D&source=editors&ust=1644906676549149&usg=AOvVaw2_AqMFz1d5je1uQkf0XAP0).
-# This can be explained by the negative beta values ($\beta_{\text{S&P}}=-0.08$,
+# [**UNL**](https://finance.yahoo.com/quote/UNL?p%3DUNL&sa=D&source=editors&ust=1644906676549149&usg=AOvVaw2_AqMFz1d5je1uQkf0XAP0).
+# This can be explained by the negative beta values ($\beta_{\text{S\&P}}=-0.08$,
 # $\beta_{\text{DJIA}}=-0.14$) from its regression with market returns. While this
 # fund had the worst mean individual returns ($R_{\text{UNL}}=10.9\%$ monthly), it
 # compensated this by having the lowest risk ($\sigma=28.06\%$) of the portfolio.
@@ -491,20 +513,15 @@ pd.melt(pd.concat([returns, table_4], axis=1))
 
 # %%
 sns.displot(
-    (
-        pd.melt(
-            pd.concat([returns, table_4], axis=1)[
-                ["COPX", "CURE", "TAN", "TECL", "UNL", "^DJI", "^GSPC"]
-            ]
-        )
-    ),
+    (pd.melt(pd.concat([returns, table_4], axis=1)[funds + ["^DJI", "^GSPC"]])),
     x="value",
     hue="variable",
     kind="kde",
 )
+plt.show()
 
 # %%
-sns.set(rc={"figure.figsize": (8, 8)})
+sns.set(rc={"figure.figsize": (n_size * 1.6, n_size * 1.6)})
 sns.heatmap(
     pd.concat([returns, table_4], axis=1).corr(),
     annot=True,
@@ -520,7 +537,7 @@ sns.set(rc={"figure.figsize": (6, 6)})
 sns.heatmap(
     table_4.corr(),
     annot=True,
-    # cmap="RdBu_r",
+    cmap="RdBu_r",
     square=True,
     vmin=-1,
     vmax=1,
@@ -528,7 +545,7 @@ sns.heatmap(
 plt.show()
 
 # %%
-# sns.reset_defaults()
+sns.reset_defaults()
 
 # %% [markdown]
 # ### E. Runs Test: S&P 500
@@ -664,14 +681,14 @@ say that the data was produced in a random manner."""
 
 # %%
 # Equal weighted portfolio weights
-w = np.array([[0.2] * 5])
+w = np.array([[1 / n_size] * n_size]).T
 
 # %%
 table_5 = pd.Series(
     {
-        "Arithmetic Mean": returns.mean().dot(w.T).item(0),
-        "Geometric Mean": (gmean(returns + 1) - 1).dot(w.T).item(0),
-        "Standard Deviation": np.sqrt(w.dot(returns.cov(ddof=0)).dot(w.T).item(0)),
+        "Arithmetic Mean": returns.mean().dot(w).item(0),
+        "Geometric Mean": (gmean(returns + 1) - 1).dot(w).item(0),
+        "Standard Deviation": np.sqrt(w.T.dot(returns.cov(ddof=0)).dot(w).item(0)),
     }
 ).to_frame()
 table_5 = table_5.T
@@ -691,11 +708,11 @@ table_5.style.format(proper_format)
 
 # %%
 portfolio_five = pd.DataFrame(
-    {"Equally Weigthed Portfolio": 10000 * (1 + returns.mean(axis=1)).cumprod()}
+    {"Equally Weigthed Portfolio": INVESTMENT * (1 + returns.mean(axis=1)).cumprod()}
 )
 
 # %%
-sep_funds = (1 + returns).cumprod() * 10000
+sep_funds = (1 + returns).cumprod() * INVESTMENT
 
 # %%
 investments = pd.concat([portfolio_five, sep_funds], axis=1)
@@ -742,6 +759,7 @@ investments.plot_bokeh.line(
     panning=False,
     zooming=False,
 )
+plt.show()
 
 # %% [markdown] tags=[]
 # ## Part Four
@@ -768,11 +786,13 @@ mean_var = mean_var.reset_index()
 mean_var.columns = ["Index", "Expected Return", "Standard Deviation"]
 
 # %%
+sns.set(rc={"figure.figsize": (n_size / 2, 8)})
 mean_var_plot = sns.scatterplot(
     data=mean_var, x="Standard Deviation", y="Expected Return", hue="Index"
 ).set(title="Mean Variance Plot")
 plt.gca().yaxis.set_major_formatter(mtick.PercentFormatter(1))
 plt.gca().xaxis.set_major_formatter(mtick.PercentFormatter(1))
+plt.show()
 
 
 # %% [markdown]
@@ -791,7 +811,7 @@ plt.gca().xaxis.set_major_formatter(mtick.PercentFormatter(1))
 # %%
 mu = table_1["Arithmetic Mean"]
 V = returns.cov(ddof=0)
-one = np.ones((5, 1))
+one = np.ones((n_size, 1))
 
 # %%
 w_star = pd.DataFrame(
@@ -806,7 +826,7 @@ mu_star = (
     one.T.dot(np.linalg.inv(V)).dot(mu) / (one.T.dot(np.linalg.inv(V))).dot(one).item(0)
 ).item(0)
 print("μ* =", f"{mu_star:,.3%} monthly")
-print("μ* =", f"{((1+mu_star)**12)-1:,.3%} monthly")
+print("μ* =", f"{((1+mu_star)**12)-1:,.3%} annually")
 
 # %%
 var_star = np.linalg.inv((one.T.dot(np.linalg.inv(V))).dot(one)).item(0)
@@ -838,6 +858,7 @@ mean_var_plot = sns.scatterplot(
 ).set(title="Mean Variance Plot")
 plt.gca().yaxis.set_major_formatter(mtick.PercentFormatter(1))
 plt.gca().xaxis.set_major_formatter(mtick.PercentFormatter(1))
+plt.show()
 
 
 # %% [markdown]
@@ -903,14 +924,16 @@ def mean_variance_frontier(
     factor_2 = np.linalg.inv((mu_one.T.dot(V_inv)).dot(mu_one))
     required_vector = np.array([[required_return], [1]])
 
-    w = np.squeeze((factor_1.dot(factor_2)).dot(required_vector))
-    expected_return = np.squeeze(w.T.dot(mu)).item(0)
+    w_func = np.squeeze((factor_1.dot(factor_2)).dot(required_vector))
+    expected_return = np.squeeze(w_func.T.dot(mu)).item(0)
     sigma = np.squeeze(
         np.sqrt((required_vector.T.dot(factor_2)).dot(required_vector))
     ).item(0)
 
-    mean_var = pd.DataFrame((expected_return, sigma)).T
-    mean_var.columns = ["E(Rp)", "SD(p)"]
+    # print(sigma ** 2)
+
+    mean_var_df = pd.DataFrame((expected_return, sigma)).T
+    mean_var_df.columns = ["E(Rp)", "SD(p)"]
 
     return functools.reduce(operator.iconcat, [[expected_return, sigma], w], [])
 
@@ -930,8 +953,10 @@ def frontier_df(required_return: float) -> pd.DataFrame:
     pd.DataFrame
         Mean Variance Frontier in DataFrame format.
     """
-    frontier = [mean_variance_frontier(i) for i in np.linspace(0, required_return, 500)]
-    frontier_pd = pd.DataFrame(frontier)
+    frontiers = [
+        mean_variance_frontier(i) for i in np.linspace(0, required_return, 500)
+    ]
+    frontier_pd = pd.DataFrame(frontiers)
     frontier_pd.columns = functools.reduce(
         operator.iconcat, [["E(Rp)", "SD(P)"], returns.columns], []
     )
@@ -940,7 +965,7 @@ def frontier_df(required_return: float) -> pd.DataFrame:
 
 
 # %%
-frontier = frontier_df(0.4)
+frontier = frontier_df(0.01)
 
 with pd.option_context("display.float_format", PERCENT.format):
     display(frontier)
@@ -985,6 +1010,7 @@ mean_var_plot = sns.scatterplot(data=frontier_df(0.4), x="SD(P)", y="E(Rp)", s=5
 )
 plt.gca().yaxis.set_major_formatter(mtick.PercentFormatter(1))
 plt.gca().xaxis.set_major_formatter(mtick.PercentFormatter(1))
+plt.show()
 
 # %% [markdown]
 # Since the annual return for one of my funds is nearly 100%, the shape of this
@@ -1006,6 +1032,7 @@ mean_var_plot = sns.scatterplot(data=frontier, x="SD(P)", y="E(Rp)").set(
 )
 plt.gca().yaxis.set_major_formatter(mtick.PercentFormatter(1))
 plt.gca().xaxis.set_major_formatter(mtick.PercentFormatter(1))
+plt.show()
 
 # %% [markdown]
 # #### Random Portfolios
@@ -1018,8 +1045,9 @@ port_returns = []
 port_sd = []
 port_w = []
 
-num_assets = len(funds)
-num_portfolios = 25000
+num_assets = n_size
+num_portfolios = int(input("How many random portfolios would you like to generate? "))
+# num_portfolios = 25000
 
 for _ in range(num_portfolios):
     # Random generation of weights
@@ -1055,6 +1083,7 @@ mean_var_plot = sns.scatterplot(
 ).set(title="Mean Variance Plot")
 plt.gca().yaxis.set_major_formatter(mtick.PercentFormatter(1))
 plt.gca().xaxis.set_major_formatter(mtick.PercentFormatter(1))
+plt.show()
 
 # %% [markdown]
 # ##### Minimum Volatility
@@ -1066,7 +1095,8 @@ min_vol_port = min_vol_port.to_frame().T
 min_vol_port.index = ["Random Minimum Variance Portfolio"]
 
 # %%
-min_vol_port
+with pd.option_context("display.float_format", PERCENT.format):
+    display(min_vol_port.T)
 
 # %% [markdown]
 # Interesting, this minimum random portfolio beat our minimum variance portfolio
@@ -1074,7 +1104,8 @@ min_vol_port
 # incur in short-selling.
 
 # %%
-display(annual_mean_var, w_star)
+with pd.option_context("display.float_format", PERCENT.format):
+    display(annual_mean_var, w_star)
 
 # %% [markdown] tags=[]
 #  ##### Maximum Sharpe Ratio
@@ -1092,7 +1123,8 @@ optimal_risky_port = optimal_risky_port.to_frame().T
 optimal_risky_port.index = ["Random Maximum Sharpe Ratio Portfolio"]
 
 # %%
-optimal_risky_port
+with pd.option_context("display.float_format", PERCENT.format):
+    display(optimal_risky_port)
 
 # %%
 annual_mean_var = pd.concat(
@@ -1129,6 +1161,7 @@ results_plot = sns.scatterplot(
 
 plt.gca().yaxis.set_major_formatter(mtick.PercentFormatter(1))
 plt.gca().xaxis.set_major_formatter(mtick.PercentFormatter(1))
+plt.show()
 
 # %% [markdown]
 # After looking at this graph we can see that while the randomly generated
@@ -1202,6 +1235,7 @@ mean_var_plot = sns.scatterplot(
 
 plt.gca().yaxis.set_major_formatter(mtick.PercentFormatter(1))
 plt.gca().xaxis.set_major_formatter(mtick.PercentFormatter(1))
+plt.show()
 
 # %% [markdown]
 # ### Treynor Measure
@@ -1216,7 +1250,7 @@ all_betas = list(list(betas.mean()))
 
 # %%
 all_betas.append(
-    np.array([0.2] * 5).dot(list(betas.mean()))
+    np.array([1 / n_size] * n_size).dot(list(betas.mean()))
 )  # equally weighted portfolio
 
 # %%
@@ -1246,7 +1280,9 @@ annual_geo = list(((table_1["Geometric Mean"] + 1) ** 12) - 1)
 all_geo = list(((table_1["Geometric Mean"] + 1) ** 12) - 1)
 
 # %%
-all_geo.append(np.array([0.2] * 5).dot(annual_geo))  # equally weighted portfolio
+all_geo.append(
+    np.array([1 / n_size] * n_size).dot(annual_geo)
+)  # equally weighted portfolio
 
 # %%
 all_geo.append(w_star.T.dot(annual_geo)[0])
@@ -1276,7 +1312,7 @@ annual_mean_var.set_index("Index").sort_values(
 )
 
 # %%
-annual_mean_var.set_index("Index")["Sharpe Ratio"].plot(
+annual_mean_var.set_index("Index")["Sharpe Ratio"].sort_values().plot(
     kind="barh", title="Sharpe Ratios"
 )
 # plt.gca().yaxis.set_major_formatter(mtick.PercentFormatter(1))
@@ -1296,7 +1332,7 @@ annual_mean_var.set_index("Index").sort_values(
 )
 
 # %%
-annual_mean_var.set_index("Index")["Treynor Ratio"].plot(
+annual_mean_var.set_index("Index")["Treynor Ratio"].sort_values(ascending=False).plot(
     kind="barh", title="Treynor Ratio"
 )
 # plt.gca().yaxis.set_major_formatter(mtick.PercentFormatter(1))
@@ -1316,7 +1352,7 @@ annual_mean_var.set_index("Index").sort_values(
 )
 
 # %%
-annual_mean_var.set_index("Index")["Geometric Mean"].plot(
+annual_mean_var.set_index("Index")["Geometric Mean"].sort_values().plot(
     kind="barh", title="Geometric Mean"
 )
 # plt.gca().yaxis.set_major_formatter(mtick.PercentFormatter(1))
