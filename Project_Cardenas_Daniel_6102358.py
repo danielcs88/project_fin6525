@@ -49,7 +49,7 @@ from scipy.stats import gmean
 
 # Plotting parameters to make plots bigger
 plt.rcParams["figure.dpi"] = 125
-# get_ipython().run_line_magic("config", "InlineBackend.figure_format = 'retina'")
+get_ipython().run_line_magic("config", "InlineBackend.figure_format = 'retina'")
 
 # %%
 display(
@@ -212,10 +212,12 @@ table_1.style.format(proper_format)
 # $$
 
 # %%
+annual_geo_from_monthly = lambda r: np.power(np.prod(r + 1), 12 / (len(r))) - 1
+
+# %%
 annualized = table_1.copy()
-annualized[["Arithmetic Mean", "Geometric Mean"]] = (
-    annualized[["Arithmetic Mean", "Geometric Mean"]] + 1
-) ** (12) - 1
+annualized["Arithmetic Mean"] = annualized["Arithmetic Mean"] * 12
+annualized["Geometric Mean"] = annual_geo_from_monthly(returns)
 annualized["Standard Deviation"] = annualized["Standard Deviation"] * (12 ** 0.5)
 
 # %%
@@ -517,7 +519,7 @@ sns.displot(
     x="value",
     hue="variable",
     kind="kde",
-)
+).set(title="Density Plot: Portfolio Returns + Benchmarks")
 plt.show()
 
 # %%
@@ -786,7 +788,9 @@ mean_var = mean_var.reset_index()
 mean_var.columns = ["Index", "Expected Return", "Standard Deviation"]
 
 # %%
-sns.set(rc={"figure.figsize": (n_size / 2, 8)})
+
+# %%
+sns.set(rc={"figure.figsize": (12, 7)})
 mean_var_plot = sns.scatterplot(
     data=mean_var, x="Standard Deviation", y="Expected Return", hue="Index"
 ).set(title="Mean Variance Plot")
@@ -1274,10 +1278,8 @@ annual_mean_var.set_index("Index").style.format(
 )
 
 # %%
-annual_geo = list(((table_1["Geometric Mean"] + 1) ** 12) - 1)
-
-# %%
-all_geo = list(((table_1["Geometric Mean"] + 1) ** 12) - 1)
+all_geo = list(annual_geo_from_monthly(returns))
+annual_geo = list(annual_geo_from_monthly(returns))
 
 # %%
 all_geo.append(
