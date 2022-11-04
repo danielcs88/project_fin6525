@@ -31,6 +31,7 @@ import functools
 import operator
 from datetime import datetime
 from typing import List
+from tqdm import tqdm
 
 import matplotlib.pyplot as plt
 import matplotlib.ticker as mtick
@@ -1053,7 +1054,7 @@ num_assets = n_size
 num_portfolios = int(input("How many random portfolios would you like to generate? "))
 # num_portfolios = 25000
 
-for _ in range(num_portfolios):
+for _ in tqdm(range(num_portfolios)):
     # Random generation of weights
     weights = np.random.random(num_assets)
     # Normalization of weights
