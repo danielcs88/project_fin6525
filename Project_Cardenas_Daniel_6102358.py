@@ -31,7 +31,6 @@ import functools
 import operator
 from datetime import datetime
 from typing import List
-from tqdm import tqdm
 
 import matplotlib.pyplot as plt
 import matplotlib.ticker as mtick
@@ -47,6 +46,7 @@ from IPython.display import Markdown, display
 from matplotlib.dates import date2num
 from pandas_datareader import data as pdr
 from scipy.stats import gmean
+from tqdm import tqdm
 
 # Plotting parameters to make plots bigger
 plt.rcParams["figure.dpi"] = 125
@@ -115,7 +115,7 @@ plt.style.use("seaborn-white")
 # %%
 start = datetime(2017, 1, 1)
 # start = datetime(2020, 1, 1)
-end = datetime(2022, 1, 1)
+end = datetime(2022, 1, 3)
 
 # %% [markdown] tags=[]
 # ## Part One: Data
@@ -161,7 +161,7 @@ with pd.option_context("display.float_format", PERCENT.format):
 
 # %%
 fig, ax = plt.subplots(figsize=(12, 7))
-ax.plot(returns, label=returns.columns)
+ax.plot(returns.cumsum(), label=returns.columns)
 ax.axvspan(
     date2num(datetime(2020, 2, 1)),
     date2num(datetime(2020, 4, 1)),
@@ -169,7 +169,7 @@ ax.axvspan(
     color="grey",
     alpha=0.3,
 )
-ax.legend(loc=3)
+ax.legend()
 ax.yaxis.set_major_formatter(mtick.PercentFormatter())
 ax.set_title("Portfolio Monthly Return")
 plt.show()
@@ -219,7 +219,7 @@ annual_geo_from_monthly = lambda r: np.power(np.prod(r + 1), 12 / (len(r))) - 1
 annualized = table_1.copy()
 annualized["Arithmetic Mean"] = annualized["Arithmetic Mean"] * 12
 annualized["Geometric Mean"] = annual_geo_from_monthly(returns)
-annualized["Standard Deviation"] = annualized["Standard Deviation"] * (12 ** 0.5)
+annualized["Standard Deviation"] = annualized["Standard Deviation"] * (12**0.5)
 
 # %%
 annualized.style.format(proper_format)
@@ -341,6 +341,9 @@ T13W = T13W.div(100).div(12)
 # S&P 500 index.
 
 # %%
+Rm
+
+# %%
 # Run the regression for each fund with S^P500 as the benchmark
 sp500_ols = [sm.OLS(endog=returns[fund], exog=Rm["^GSPC"]).fit() for fund in funds]
 
@@ -407,7 +410,7 @@ table_4
 
 # %%
 fig, ax = plt.subplots(figsize=(8, 5))
-ax.plot(table_4, label=table_4.columns)
+ax.plot(table_4.cumsum(), label=table_4.columns)
 ax.axvspan(
     date2num(datetime(2020, 2, 1)),
     date2num(datetime(2020, 4, 1)),
@@ -415,7 +418,7 @@ ax.axvspan(
     color="grey",
     alpha=0.3,
 )
-ax.legend(loc=3)
+ax.legend()
 ax.yaxis.set_major_formatter(mtick.PercentFormatter())
 ax.set_title(
     "S&P 500, Dow Jones Industrial Average,"
@@ -439,6 +442,9 @@ display(
 # %%
 returns_tidy = pd.melt(returns.reset_index(), id_vars="Date").set_index("Date")
 returns_tidy = returns_tidy.rename(columns={"variable": "Fund", "value": "Return"})
+
+# %%
+returns_tidy
 
 # %%
 # This complicated code is to make running possible on Google Colab
@@ -752,17 +758,17 @@ pandas_bokeh.output_notebook()
 # If I wanted a more interactive plot, I could use `pandas-bokeh`
 
 # %%
-investments.plot_bokeh.line(
-    title="Graph 1: Individual Funds vs Portfolio",
-    disable_scientific_axes="y",
-    number_format="‘$0,0.0’",
-    ylabel="Terminal Value [$]",
-    legend="top_left",
-    figsize=(1024, 600),
-    panning=False,
-    zooming=False,
-)
-plt.show()
+# investments.plot_bokeh.line(
+#     title="Graph 1: Individual Funds vs Portfolio",
+#     disable_scientific_axes="y",
+#     number_format="‘$0,0.0’",
+#     ylabel="Terminal Value [$]",
+#     legend="top_left",
+#     # figsize=(1024, 600),
+#     panning=False,
+#     zooming=False,
+# )
+# plt.show()
 
 # %% [markdown] tags=[]
 # ## Part Four
@@ -787,8 +793,6 @@ mean_var.style.format(proper_format)
 # %%
 mean_var = mean_var.reset_index()
 mean_var.columns = ["Index", "Expected Return", "Standard Deviation"]
-
-# %%
 
 # %%
 sns.set(rc={"figure.figsize": (12, 7)})
@@ -996,7 +1000,7 @@ def monthly_to_annual(df: pd.DataFrame = mean_var) -> pd.DataFrame:
     """
 
     df["Expected Return"] = ((df["Expected Return"] + 1) ** 12) - 1
-    df["Standard Deviation"] = df["Standard Deviation"] * (12 ** 0.5)
+    df["Standard Deviation"] = df["Standard Deviation"] * (12**0.5)
 
     return df
 
